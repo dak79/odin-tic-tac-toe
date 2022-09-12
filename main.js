@@ -1,27 +1,52 @@
-
-const gameBoard = (function () {
-    const board = []
-
-})();
-
 const player = function(name, symbol) {
-    
-    const getName = () => console.log(`Hi i'm ${name}`);
-    const getSymbol = () => console.log(`Hi i will use ${symbol}`);
 
+    const getName = () => name;
+    const getSymbol = () => symbol;
+
+    
+    // Get DOM elements
+    const spots = document.querySelectorAll('.spot');
+    
+    // Event Listeners
+    spots.forEach(spot => {
+        spot.addEventListener('click', play);
+    })
+    
+    // Choosen play
+    function play(event) {
+        if(!event.target.textContent) {
+            const index = event.target.dataset.index;
+            gameBoard.gameState(index, getSymbol());
+            gameBoard.render(spots);           
+        }
+    }
+            
     return {
         getName,
-        getSymbol
+        getSymbol,
+        play
     }
 }
 
-const jim = player('jim', 'X');
-const leo = player('leo', 'O');
-jim.getName();
-jim.getSymbol();
+const gameBoard = (function () {
+    const board = [null, null, null, null, null, null, null, null, null];
+    
+        const gameState = (update, symbol) => {
+            board.splice(update, 1, symbol);
+        }
+        
+        const render = (spots) => {
+            spots.forEach(spot => {
+                spot.textContent = board[spot.dataset.index];
+            })    
+        }
+        
+        return {
+            render,
+            gameState
+        }    
+})();
 
-leo.getName();
-leo.getSymbol();
-
-console.log(jim.p);
-console.log(leo.p);
+const game = (function(){
+    const player1 = player('jim', 'X');     
+})();

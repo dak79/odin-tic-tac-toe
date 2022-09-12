@@ -71,6 +71,12 @@ section.board {
     height: 100%;
 }
 
+.spot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #spot-zero {
     grid-area: spot0;  
 }
@@ -127,6 +133,11 @@ main {
 
 h1 {
     color: var(--zinc-900);
+}
+
+.spot {
+    color: var(--zinc-900);
+    font-size: 3rem;
 }
 
 .spot-right {
