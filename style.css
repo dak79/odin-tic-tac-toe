@@ -20,6 +20,8 @@
     --zinc-700: #3f3f46;
     --zinc-800: #27272a;
     --zinc-900: #18181b;
+
+    --gameBoardBorder: 5px solid var(--zinc-400);
 }
 
 /* Font */
@@ -103,7 +105,10 @@ section.board {
 
 footer {
     grid-area: footer;
+}
 
+.score {
+    margin: 0 1rem;
 }
 
 /* Style */
@@ -116,20 +121,28 @@ main {
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
 }
 
+h1 {
+    color: var(--zinc-800);
+}
 
 .spot-right {
-    border-right: 5px solid black;
-
-
+    border-right: var(--gameBoardBorder);
 }
 
 .spot-left {
-    border-left: 5px solid black;
+    border-left: var(--gameBoardBorder);
 }
 
 .spot-bottom {
-    border-bottom: 5px solid black;
+    border-bottom: var(--gameBoardBorder);
 }
 
+footer {
+    color: var(--zinc-800);
+    font-weight: 700;
+    font-size: 1.5rem;
+}
 
-
+.score {
+    font-size: 1.5rem;
+}
