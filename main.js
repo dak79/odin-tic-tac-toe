@@ -30,8 +30,6 @@ const game = (() => {
             player1.setIsPlaying();
             player2.setIsPlaying();
         }
-
-
     }
     
     const winner = () => {
@@ -44,9 +42,9 @@ const game = (() => {
 
 const gameBoard = (() => {
     const boardState = [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null],
+        null, null, null,
+        null, null, null,
+        null, null, null
     ];
 
     // Get DOM elements
@@ -59,7 +57,7 @@ const gameBoard = (() => {
         if (!event.target.textContent) {
 
             // Update board state
-            player1.getIsPlaying() ? updateBoardState(event.target.dataset.row, event.target.dataset.column, player1.getSymbol()) : updateBoardState(event.target.dataset.row, event.target.dataset.column, player2.getSymbol());
+            player1.getIsPlaying() ? updateBoardState(event.target.dataset.index, player1.getSymbol()) : updateBoardState(event.target.dataset.index, player2.getSymbol());
 
             // Render board state
             render();
@@ -70,8 +68,8 @@ const gameBoard = (() => {
     }
     
     // update boardState array
-    const updateBoardState = (row, column, symbol) => boardState[row].splice(column, 1, symbol);
+    const updateBoardState = (update, symbol) => boardState.splice(update, 1, symbol);
         
     // Render boardState array
-    const render = () => spots.forEach(spot => spot.textContent = boardState[spot.dataset.row][spot.dataset.column]);
+    const render = () => spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
 })();
