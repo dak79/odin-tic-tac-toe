@@ -19,8 +19,8 @@ const player = (name, symbol, isPlaying) => {
     }
 
 } 
-const player1 = player('jim', 'X', true);
-const player2 = player('josh', '0', false);
+const playerOne = player('jim', 'X', true);
+const playerTwo = player('josh', '0', false);
 
 // This module manage start, turn, ending of game
 const game = (() => {
@@ -29,12 +29,12 @@ const game = (() => {
     }
 
     const switchTurn = () => {
-        if (player1.getIsPlaying()) {
-            player1.setIsPlaying();
-            player2.setIsPlaying();
+        if (playerOne.getIsPlaying()) {
+            playerOne.setIsPlaying();
+            playerTwo.setIsPlaying();
         } else {
-            player1.setIsPlaying();
-            player2.setIsPlaying();
+            playerOne.setIsPlaying();
+            playerTwo.setIsPlaying();
         }
     }
     
@@ -71,7 +71,7 @@ const gameBoard = (() => {
 
             
             // Update board state
-            player1.getIsPlaying() ? updateBoardState(event.target.dataset.index, player1.getSymbol()) : updateBoardState(event.target.dataset.index, player2.getSymbol());
+            playerOne.getIsPlaying() ? updateBoardState(event.target.dataset.index, playerOne.getSymbol()) : updateBoardState(event.target.dataset.index, playerTwo.getSymbol());
             
             // Render board state
             render();
@@ -107,9 +107,9 @@ const gameBoard = (() => {
         const playerOneMoves = [];
         const playerTwoMoves = [];
 
-        const symbol = player1.getIsPlaying() ? player1.getSymbol() : player2.getSymbol(); 
+        const symbol = playerOne.getIsPlaying() ? playerOne.getSymbol() : playerTwo.getSymbol(); 
         
-        const whoPlays = player1.getIsPlaying();
+        const whoPlays = playerOne.getIsPlaying();
 
         // Find and store all occurencies of one symbol
         let index = boardState.indexOf(symbol)
@@ -125,7 +125,7 @@ const gameBoard = (() => {
             const winnerExist = winningPatterns[i].every(winningPattern => whoPlays ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern))
 
              if (winnerExist) {
-                whoPlays ? player1.setWinner() : player2.setWinner();
+                whoPlays ? playerOne.setWinner() : playerTwo.setWinner();
 
                 return 'win';
             }
