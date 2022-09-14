@@ -81,11 +81,6 @@ section.board {
     justify-items: center;
 }
 
-.restart-msg {
-    text-align: center;
-    font-weight: 700;
-}
-
 .invisible {
     display: none;
 }
@@ -154,10 +149,23 @@ h1 {
     color: var(--zinc-900);
 }
 
-.winning-text {
+.winning-text,
+.tie-text {
     font-size: 4rem;
     font-weight: 700;
+}
+
+.winning-text {
     color: var(--emerald-700);
+}
+
+.tie-text {
+    color: var(--orange-700);
+}
+
+.restart-msg {
+    text-align: center;
+    font-weight: 700;
 }
 
 label {

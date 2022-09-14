@@ -62,7 +62,7 @@ const game = (() => {
         }
     }
 
-    const winner = () => {
+    const end = (result) => {
 
         sectionGameBoard.classList.add('invisible');
         sectionGameBoard.classList.remove('board');
@@ -73,9 +73,14 @@ const game = (() => {
         const newGameInfo = document.createElement('p')
         
         wrapper.classList.add('winning-msg')
-        console.log(playerOne.getWinner())
-        winningText.textContent = `${playerOne.getWinner() ? playerOne.getName() : playerTwo.getName()} win the match`;
-        winningText.classList.add('winning-text');
+        
+        if (result === 'win') {
+            winningText.textContent = `${playerOne.getWinner() ? playerOne.getName() : playerTwo.getName()} win the match`;
+            winningText.classList.add('winning-text');
+        } else {
+            winningText.textContent = `It's a tie`;
+            winningText.classList.add('tie-text')
+        }
 
         newGameInfo.textContent = `Click for restart the game`;
         newGameInfo.classList.add('restart-msg');
@@ -92,17 +97,10 @@ const game = (() => {
         wrapper.appendChild(newGameInfo);
     } 
 
-    const tie = () => {
-        sectionGameBoard.classList.add('invisible');
-        sectionGameBoard.classList.remove('board');
-
-        console.log('drow')
-    }
     return {
         start,
         switchTurn,
-        winner,
-        tie
+        end
     }
 })();
 
@@ -139,13 +137,7 @@ const gameBoard = (() => {
             const nextMove = finalBoard(event);
 
             // Next move
-            nextMove === 'next' ? game.switchTurn() : 0;
-            
-            // Win
-            nextMove === 'win' ? game.winner() : 0;
-            
-            // Tie
-            nextMove === 'tie' ? game.tie() : 0; 
+            nextMove === 'next' ? game.switchTurn() : game.end(nextMove);
         }
     }
     
@@ -193,8 +185,6 @@ const gameBoard = (() => {
                 return 'win';
             }
         }
-
-
         return 'next';
     }
 
