@@ -21,6 +21,9 @@
     --zinc-800: #27272a;
     --zinc-900: #18181b;
 
+    --emerald-700: #047857;
+    --orange-700: #c2410c;
+
     --gameBoardBorder: 5px solid var(--zinc-500);
 }
 
@@ -69,6 +72,22 @@ section.board {
         
     width: 40%;
     height: 100%;
+}
+
+.winning-msg {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
+}
+
+.restart-msg {
+    text-align: center;
+    font-weight: 700;
+}
+
+.invisible {
+    display: none;
 }
 
 .spot {
@@ -133,6 +152,16 @@ main {
 
 h1 {
     color: var(--zinc-900);
+}
+
+.winning-text {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--emerald-700);
+}
+
+label {
+    text-align: center;
 }
 
 .spot {

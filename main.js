@@ -4,10 +4,9 @@ const player = (name, symbol, isPlaying) => {
     const getName = () => name;
     const getSymbol = () => symbol;
     const getIsPlaying = () => isPlaying;
-    const setIsPlaying = () => isPlaying = !isPlaying;
+    const setIsPlaying = value => isPlaying = value;
     const getWinner = () => winner;
-    const setWinner = () => winner = true;
-
+    const setWinner = value => winner = value;
 
     return {
         getName,
@@ -24,28 +23,83 @@ const playerTwo = player('josh', '0', false);
 
 // This module manage start, turn, ending of game
 const game = (() => {
+
+    const sectionGameBoard = document.querySelector('#gameBoard');
+    
     const start = () => {
 
+        const winningDisplay = document.querySelector('.winning-msg');
+        
+        // Reset display
+        if (winningDisplay) {
+            winningDisplay.remove();
+            
+        }
+
+        if (sectionGameBoard.className === 'invisible') {
+            sectionGameBoard.classList.add('board');
+            sectionGameBoard.classList.remove('invisible');
+        }
+
+        // Reset player prop
+        playerOne.setWinner(false);
+        playerTwo.setWinner(false);
+
+        if (!playerOne.getIsPlaying()) {
+            playerOne.setIsPlaying(true);
+            playerTwo.setIsPlaying(false);
+
+        }
     }
 
     const switchTurn = () => {
         if (playerOne.getIsPlaying()) {
-            playerOne.setIsPlaying();
-            playerTwo.setIsPlaying();
+            playerOne.setIsPlaying(false);
+            playerTwo.setIsPlaying(true);
         } else {
-            playerOne.setIsPlaying();
-            playerTwo.setIsPlaying();
+            playerOne.setIsPlaying(true);
+            playerTwo.setIsPlaying(false);
         }
     }
-    
+
     const winner = () => {
-        console.log('winner');
+
+        sectionGameBoard.classList.add('invisible');
+        sectionGameBoard.classList.remove('board');
+
+        const h1 = document.querySelector('h1')
+        const wrapper = document.createElement('div');
+        const winningText = document.createElement('p')
+        const newGameInfo = document.createElement('p')
+        
+        wrapper.classList.add('winning-msg')
+        console.log(playerOne.getWinner())
+        winningText.textContent = `${playerOne.getWinner() ? playerOne.getName() : playerTwo.getName()} win the match`;
+        winningText.classList.add('winning-text');
+
+        newGameInfo.textContent = `Click for restart the game`;
+        newGameInfo.classList.add('restart-msg');
+
+        wrapper.addEventListener('click', restart) 
+        
+        function restart() {
+            start();
+            wrapper.removeEventListener('click', restart);
+        }
+        
+        h1.after(wrapper);
+        wrapper.appendChild(winningText);
+        wrapper.appendChild(newGameInfo);
     } 
 
     const tie = () => {
+        sectionGameBoard.classList.add('invisible');
+        sectionGameBoard.classList.remove('board');
+
         console.log('drow')
     }
     return {
+        start,
         switchTurn,
         winner,
         tie
@@ -59,26 +113,33 @@ const gameBoard = (() => {
         null, null, null
     ];
 
+    // Store player moves in arrays
+    const playerOneMoves = [];
+    const playerTwoMoves = [];
+    
+    // Array of winning patterns
+    const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+    
     // Get DOM elements
     const spots = document.querySelectorAll('.spot');
     
     // Attach event listeners
     spots.forEach(spot => spot.addEventListener('click', play));
-    
 
     function play(event) {
         if (!event.target.textContent) {
-
+            
+            
             // Update board state
             playerOne.getIsPlaying() ? updateBoardState(event.target.dataset.index, playerOne.getSymbol()) : updateBoardState(event.target.dataset.index, playerTwo.getSymbol());
             
             // Render board state
             render();
             
-            const nextMove = finalBoard();
+            const nextMove = finalBoard(event);
 
             // Next move
-            nextMove === 'next' ? game.switchTurn() : spots.forEach(spot => spot.removeEventListener('click', play));
+            nextMove === 'next' ? game.switchTurn() : 0;
             
             // Win
             nextMove === 'win' ? game.winner() : 0;
@@ -93,45 +154,50 @@ const gameBoard = (() => {
         
     // Render boardState array
     const render = () => spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
+    
+    // Reset state
+    const resetBoardState = () => {
+        boardState.forEach((spot, index) => boardState[index] = null);
+        playerOneMoves.splice(0, playerOneMoves.length);
+        playerTwoMoves.splice(0, playerTwoMoves.length);
+
+    }
 
     // Manage final board
-    const finalBoard = () => {
-
-        // Store player moves in arrays
-        const playerOneMoves = [];
-        const playerTwoMoves = [];
-
-        const symbol = playerOne.getIsPlaying() ? playerOne.getSymbol() : playerTwo.getSymbol(); 
-        
-        const whoPlays = playerOne.getIsPlaying();
-
-        // Find and store all occurencies of one symbol
-        let index = boardState.indexOf(symbol);
-        
-        while (index !== -1) {
-            whoPlays ? playerOneMoves.push(index) : playerTwoMoves.push(index);index = boardState.indexOf(symbol, index + 1);
-        }
-
-        // Find if a player reached a winning pattern
-        const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-
-        for (let i = 0; i < 8; i++) { 
-            const winnerExist = winningPatterns[i].every(winningPattern => whoPlays ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern))
-
-             if (winnerExist) {
-                whoPlays ? playerOne.setWinner() : playerTwo.setWinner();
-                return 'win';
-            }
-        }
+    const finalBoard = (event) => {
 
         // Search for a tie
         const availableMoves = boardState.includes(null);
 
         if (!availableMoves) {
+            resetBoardState();
+            render();
             return 'tie';
         }
+        
+        const whoPlays = playerOne.getIsPlaying();
+
+        // Player move
+        let index = parseInt(event.target.dataset.index);
+        
+        whoPlays ? playerOneMoves.push(index) : playerTwoMoves.push(index);
+        
+        // Search for a winner
+        for (let i = 0; i < 8; i++) { 
+            const winnerExist = winningPatterns[i].every(winningPattern => whoPlays ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern))
+
+             if (winnerExist) {
+                resetBoardState();
+                render();
+                whoPlays ? playerOne.setWinner(true) : playerTwo.setWinner(true);
+                return 'win';
+            }
+        }
+
 
         return 'next';
     }
 
 })();
+
+game.start();
