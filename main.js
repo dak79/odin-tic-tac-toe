@@ -41,9 +41,14 @@ const game = (() => {
     const winner = () => {
         console.log('winner');
     } 
+
+    const tie = () => {
+        console.log('tie')
+    }
     return {
         switchTurn,
-        winner
+        winner,
+        tie
     }
 })();
 
@@ -60,6 +65,7 @@ const gameBoard = (() => {
     // Attach event listeners
     spots.forEach(spot => spot.addEventListener('click', play));
     
+
     function play(event) {
         if (!event.target.textContent) {
 
@@ -70,19 +76,32 @@ const gameBoard = (() => {
             // Render board state
             render();
             
-            const win = winningBoard();
-            
-            win ? game.winner() : game.switchTurn();
+            const nextMove = finalBoard();
+
+            if (nextMove !== 'next') {
+
+            // Detach event listener
+            spots.forEach(spot => spot.removeEventListener('click', play));
+            }
+
+            if (nextMove === 'win') {
+                game.winner()
+            } else if (nextMove === 'tie') {
+                game.tie()
+            } else {
+                game.switchTurn();
+            }
         }
     }
     
-    // update boardState array
+    // Update boardState array
     const updateBoardState = (update, symbol) => boardState.splice(update, 1, symbol);
         
     // Render boardState array
     const render = () => spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
 
-    const winningBoard = () => {
+    // Manage final board
+    const finalBoard = () => {
 
         // Store player moves in arrays
         const playerOneMoves = [];
@@ -107,8 +126,20 @@ const gameBoard = (() => {
 
              if (winnerExist) {
                 whoPlays ? player1.setWinner() : player2.setWinner();
-                return true;
-             }
+
+                return 'win';
+            }
         }
+
+        // Search for a tie
+        const availableMoves = boardState.includes(null);
+
+        if (!availableMoves) {
+
+            return 'tie';
+        }
+
+        return 'next';
     }
+
 })();
