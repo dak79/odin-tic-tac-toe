@@ -1,3 +1,4 @@
+// Factory function for player: name, symbol, isPlaying, setIsPlaying
 const player = (name, symbol, isPlaying) => {
     const getName = () => name;
     const getSymbol = () => symbol;
@@ -10,15 +11,13 @@ const player = (name, symbol, isPlaying) => {
         getIsPlaying,
         setIsPlaying
     }
-    // Factory function for player: name, symbol, isPlaying, turn
 
 } 
 const player1 = player('jim', 'X', true);
 const player2 = player('josh', '0', false);
 
-
+// This module manage start, turn, ending of game
 const game = (() => {
-    // This module manage start, turn, ending of game
     const start = () => {
 
     }
@@ -37,14 +36,7 @@ const game = (() => {
     
     const winner = () => {
         
-    }
-    // console.log('G ' + player1.getName());
-    // console.log('G ' + player1.getSymbol());
-    // console.log('G ' + player1.getIsPlaying());
-    // console.log('G ' + player2.getName());
-    // console.log('G ' + player2.getSymbol());
-    // console.log('G ' + player2.getIsPlaying());
-    
+    } 
     return {
         switchTurn
     }
@@ -56,14 +48,11 @@ const gameBoard = (() => {
         [null, null, null],
         [null, null, null],
     ];
-    // console.log('B ' + player1.getName());
-    // console.log('B ' + player1.getSymbol());
-    // console.log('B ' + player1.getIsPlaying());
-    // console.log('B ' + player2.getName());
-    // console.log('B ' + player2.getSymbol());
-    // console.log('B ' + player2.getIsPlaying());
+
+    // Get DOM elements
     const spots = document.querySelectorAll('.spot');
     
+    // Attach event listeners
     spots.forEach(spot => spot.addEventListener('click', play));
     
     function play(event) {
@@ -71,49 +60,18 @@ const gameBoard = (() => {
 
             // Update board state
             player1.getIsPlaying() ? updateBoardState(event.target.dataset.row, event.target.dataset.column, player1.getSymbol()) : updateBoardState(event.target.dataset.row, event.target.dataset.column, player2.getSymbol());
+
+            // Render board state
+            render();
+
+            // Switch turn
+            game.switchTurn();
         }
-         
-
-        // render board state
-        render();
-
-        // Switch turn
-        // console.log(`Before switch is playing: ${player1.getIsPlaying() ? 'Player 1' : 'Player 2'}`);
-        game.switchTurn();
-        // console.log(`After switch is playing: ${player1.getIsPlaying() ? 'Player 1' : 'Player 2'}`);
-        
-        console.log(`click: Row ${event.target.dataset.row} - Column: ${event.target.dataset.column}`);
-
-        
     }
     
-    const updateBoardState = (row, column, symbol) => {
-        boardState[row].splice(column, 1, symbol);
-        // console.log(boardState);
+    // update boardState array
+    const updateBoardState = (row, column, symbol) => boardState[row].splice(column, 1, symbol);
         
-        // This function will update the array according to the move of player
-    }
-
-    const render = () => {
-        // This function will render the boardState
-        spots.forEach(spot => {
-            spot.textContent = boardState[spot.dataset.row][spot.dataset.column]
-        })
-}
-    
+    // Render boardState array
+    const render = () => spots.forEach(spot => spot.textContent = boardState[spot.dataset.row][spot.dataset.column]);
 })();
-
-
-
-
-// Test
-// console.log(player1.getName());
-// console.log(player1.getSymbol());
-// console.log(player1.getIsPlaying());
-// console.log(player2.getName());
-// console.log(player2.getSymbol());
-// console.log(player2.getIsPlaying());
-
-
-
-
