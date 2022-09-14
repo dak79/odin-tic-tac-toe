@@ -52,9 +52,9 @@ const game = (() => {
 
 const gameBoard = (() => {
     const boardState = [
-        ["0", "1", "2"],
-        ["3", "4", "5"],
-        ["6", "7", "8"],
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
     ];
     // console.log('B ' + player1.getName());
     // console.log('B ' + player1.getSymbol());
@@ -67,28 +67,39 @@ const gameBoard = (() => {
     spots.forEach(spot => spot.addEventListener('click', play));
     
     function play(event) {
-        // Update board state
+        if (!event.target.textContent) {
+
+            // Update board state
+            player1.getIsPlaying() ? updateBoardState(event.target.dataset.row, event.target.dataset.column, player1.getSymbol()) : updateBoardState(event.target.dataset.row, event.target.dataset.column, player2.getSymbol());
+        }
+         
 
         // render board state
+        render();
 
         // Switch turn
-        console.log(`Before switch is playing: ${player1.getIsPlaying() ? 'Player 1' : 'Player 2'}`);
+        // console.log(`Before switch is playing: ${player1.getIsPlaying() ? 'Player 1' : 'Player 2'}`);
         game.switchTurn();
-        console.log(`After switch is playing: ${player1.getIsPlaying() ? 'Player 1' : 'Player 2'}`);
+        // console.log(`After switch is playing: ${player1.getIsPlaying() ? 'Player 1' : 'Player 2'}`);
         
         console.log(`click: Row ${event.target.dataset.row} - Column: ${event.target.dataset.column}`);
 
         
     }
     
-    const updateBoardState = () => {
-        console.log('UPDATE')
+    const updateBoardState = (row, column, symbol) => {
+        boardState[row].splice(column, 1, symbol);
+        // console.log(boardState);
+        
         // This function will update the array according to the move of player
     }
 
     const render = () => {
         // This function will render the boardState
-    } 
+        spots.forEach(spot => {
+            spot.textContent = boardState[spot.dataset.row][spot.dataset.column]
+        })
+}
     
 })();
 
