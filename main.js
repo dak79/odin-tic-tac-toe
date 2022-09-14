@@ -43,7 +43,7 @@ const game = (() => {
     } 
 
     const tie = () => {
-        console.log('tie')
+        console.log('drow')
     }
     return {
         switchTurn,
@@ -78,19 +78,14 @@ const gameBoard = (() => {
             
             const nextMove = finalBoard();
 
-            if (nextMove !== 'next') {
-
-            // Detach event listener
-            spots.forEach(spot => spot.removeEventListener('click', play));
-            }
-
-            if (nextMove === 'win') {
-                game.winner()
-            } else if (nextMove === 'tie') {
-                game.tie()
-            } else {
-                game.switchTurn();
-            }
+            // Next move
+            nextMove === 'next' ? game.switchTurn() : spots.forEach(spot => spot.removeEventListener('click', play));
+            
+            // Win
+            nextMove === 'win' ? game.winner() : 0;
+            
+            // Tie
+            nextMove === 'tie' ? game.tie() : 0; 
         }
     }
     
@@ -112,7 +107,7 @@ const gameBoard = (() => {
         const whoPlays = playerOne.getIsPlaying();
 
         // Find and store all occurencies of one symbol
-        let index = boardState.indexOf(symbol)
+        let index = boardState.indexOf(symbol);
         
         while (index !== -1) {
             whoPlays ? playerOneMoves.push(index) : playerTwoMoves.push(index);index = boardState.indexOf(symbol, index + 1);
@@ -126,7 +121,6 @@ const gameBoard = (() => {
 
              if (winnerExist) {
                 whoPlays ? playerOne.setWinner() : playerTwo.setWinner();
-
                 return 'win';
             }
         }
@@ -135,7 +129,6 @@ const gameBoard = (() => {
         const availableMoves = boardState.includes(null);
 
         if (!availableMoves) {
-
             return 'tie';
         }
 
