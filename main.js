@@ -69,7 +69,6 @@ const gameBoard = (() => {
     function play(event) {
         if (!event.target.textContent) {
 
-            
             // Update board state
             playerOne.getIsPlaying() ? updateBoardState(event.target.dataset.index, playerOne.getSymbol()) : updateBoardState(event.target.dataset.index, playerTwo.getSymbol());
             
