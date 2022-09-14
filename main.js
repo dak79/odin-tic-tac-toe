@@ -84,29 +84,26 @@ const gameBoard = (() => {
 
     const winningBoard = () => {
 
-        // Find all occurencies
-        const player1Plays = [];
-        const player2Plays = [];
+        // Store player moves in arrays
+        const playerOneMoves = [];
+        const playerTwoMoves = [];
 
         const symbol = player1.getIsPlaying() ? player1.getSymbol() : player2.getSymbol(); 
-
-
-
-        let index = boardState.indexOf(symbol)
-        while (index !== -1) {
-            player1.getIsPlaying() ? player1Plays.push(index) : player2Plays.push(index);
-            index = boardState.indexOf(symbol, index + 1);
-        }
-
-        console.log(player1Plays);
-        console.log(player2Plays);
-
-        const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-
+        
         const whoPlays = player1.getIsPlaying();
 
+        // Find and store all occurencies of one symbol
+        let index = boardState.indexOf(symbol)
+        
+        while (index !== -1) {
+            whoPlays ? playerOneMoves.push(index) : playerTwoMoves.push(index);index = boardState.indexOf(symbol, index + 1);
+        }
+
+        // Find if a player reached a winning pattern
+        const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+
         for (let i = 0; i < 8; i++) { 
-            const winnerExist = winningPatterns[i].every(winningPattern => whoPlays ? player1Plays.includes(winningPattern) : player2Plays.includes(winningPattern))
+            const winnerExist = winningPatterns[i].every(winningPattern => whoPlays ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern))
 
              if (winnerExist) {
                 whoPlays ? player1.setWinner() : player2.setWinner();
