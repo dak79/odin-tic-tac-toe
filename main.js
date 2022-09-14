@@ -75,7 +75,7 @@ const game = (() => {
         wrapper.classList.add('winning-msg')
         
         if (result === 'win') {
-            winningText.textContent = `${playerOne.getWinner() ? playerOne.getName() : playerTwo.getName()} win the match`;
+            winningText.textContent = `${playerOne.getWinner() ? playerOne.getName() : playerTwo.getName()} wins the match`;
             winningText.classList.add('winning-text');
         } else {
             winningText.textContent = `It's a tie`;
