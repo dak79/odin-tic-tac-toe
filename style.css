@@ -78,6 +78,7 @@ section.board {
 }
 
 .winning-msg {
+    grid-area: game;;
     display: flex;
     flex-direction: column;
     justify-content: center;
