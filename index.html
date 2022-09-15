@@ -31,7 +31,28 @@
             <div id="spot-seven" class="spot" data-row="2" data-column="1" data-index="7"></div>
             <div id="spot-eight" class="spot spot-left" data-row="2" data-column="2" data-index="8"></div>
         </section>
-        <footer>Player 1 <span class="separator">-</span> Player 2</footer>
+        <footer>
+            <div class="footer-first-row">
+                <p>Player 1 <span class="separator">-</span> Player 2</p>
+                <button type="button">Start</button>
+            </div>
+            <div class="footer-second-row">
+                <button type="button">Change Name</button>
+                <div>
+                    <label for="radio-human-player-one">Human</label>
+                    <input type="radio" name="human-one" id="radio-human-player-one">
+                    <label for="radio-bot-player-one">Bot</label>
+                    <input type="radio" name="bot-one" id="radio-bot-player-one">
+                </div>
+                <button type="button">Change Name</button>
+                <div>
+                    <label for="radio-human-player-two">Human</label>
+                    <input type="radio" name="human-two" id="radio-human-player-two">
+                    <label for="radio-bot-player-two">Bot</label>
+                    <input type="radio" name="bot-two" id="radio-bot-player-two">
+                </div>
+            </div>
+        </footer>
     </main>
 </body>
 </html>
