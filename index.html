@@ -32,8 +32,16 @@
             <div id="spot-eight" class="spot spot-left" data-row="2" data-column="2" data-index="8"></div>
         </section>
         <footer>
-            <p id="player-one-name" class="player-name-text">Player 1</p> 
-            <p id="player-two-name" class="player-name-text">Player 2</p>
+            <div class="player-one-set-play">
+                <p id="player-one-name" class="player-name-text">Player 1</p> 
+                <input type="radio" name="radio-play-first" value="player-one-play-first" id="radio-player-one-play-first" checked>
+                <label for="radio-player-one-play-first" id="radio-player-one-play-first" class="btn-play-first">Play First</label>
+            </div>
+            <div class="player-two-set-play">
+                <p id="player-two-name" class="player-name-text">Player 2</p>
+                <input type="radio" name="radio-play-first" value="player-two-play-first" id="radio-player-two-play-first">
+                <label for="radio-player-two-play-first" id="radio-player-two-play-first" class="btn-play-first">Play First</label>
+            </div>
             <button type="button" id="btn-start" class="btn btn-start">Start</button>
             <div class="player-one-btn">
                 <button type="button" id="btn-change-name-player-one" class="btn btn-change">Change Name</button>
