@@ -27,6 +27,7 @@ const setGame = (()=> {
     const playerTwo = player('Player 2', '0', false);
 
     const main = document.querySelector('#display');
+    const sectionGameBoard = document.querySelector('#gameBoard');
     const changeNameBtns = document.querySelectorAll('.btn-change');
     
    changeNameBtns.forEach(button => button.addEventListener('click', changePlayerName));
@@ -73,19 +74,7 @@ const setGame = (()=> {
         card.appendChild(btnSave);
     }
 
-    return {
-        playerOne,
-        playerTwo
-    }
-
-})();
-
-// This module manage start, turn, ending of game
-const gameDisplay = (() => {
-
-    const sectionGameBoard = document.querySelector('#gameBoard');
-    
-    const start = () => {
+    const restartDisplay = () => {
 
         const winningDisplay = document.querySelector('.winning-msg');
 
@@ -103,7 +92,7 @@ const gameDisplay = (() => {
         }
     }
 
-    const end = (result) => {
+    const endDisplay = (result) => {
 
         sectionGameBoard.classList.add('invisible');
         sectionGameBoard.classList.remove('board');
@@ -129,7 +118,7 @@ const gameDisplay = (() => {
         wrapper.addEventListener('click', restart) 
         
         function restart() {
-            start();
+            restartDisplay();
 
             // Enable footers buttons
 
@@ -143,9 +132,12 @@ const gameDisplay = (() => {
     } 
 
     return {
-        start,
-        end
+        playerOne,
+        playerTwo,
+        restartDisplay,
+        endDisplay
     }
+
 })();
 
 const gameBoard = (() => {
@@ -156,7 +148,7 @@ const gameBoard = (() => {
     ];
 
     const start = () => {
-        gameDisplay.start();
+        setGame.restartDisplay();
         resetBoardState();
     }
 
@@ -185,7 +177,7 @@ const gameBoard = (() => {
             const nextMove = finalBoard(event);
 
             // Next move
-            nextMove === 'next' ? switchTurn() : gameDisplay.end(nextMove);
+            nextMove === 'next' ? switchTurn() : setGame.endDisplay(nextMove);
         }
     }
 
