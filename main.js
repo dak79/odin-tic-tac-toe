@@ -18,8 +18,17 @@ const player = (name, symbol, isPlaying) => {
     }
 
 } 
-const playerOne = player('jim', 'X', true);
-const playerTwo = player('josh', '0', false);
+
+const setGame = (()=> {
+    const playerOne = player('jim', 'X', true);
+    const playerTwo = player('josh', '0', false);
+
+    return {
+        playerOne,
+        playerTwo
+    }
+
+})();
 
 // This module manage start, turn, ending of game
 const gameDisplay = (() => {
@@ -55,7 +64,7 @@ const gameDisplay = (() => {
         wrapper.classList.add('winning-msg')
         
         if (result === 'win') {
-            winningText.textContent = `${playerOne.getWinner() ? playerOne.getName() : playerTwo.getName()} wins the match`;
+            winningText.textContent = `${setGame.playerOne.getWinner() ? setGame.playerOne.getName() : setGame.playerTwo.getName()} wins the match`;
             winningText.classList.add('winning-text');
         } else {
             winningText.textContent = `It's a tie`;
@@ -107,7 +116,7 @@ const gameBoard = (() => {
         if (!event.target.textContent) {
             
             // Update board state
-            playerOne.getIsPlaying() ? updateBoardState(event.target.dataset.index, playerOne.getSymbol()) : updateBoardState(event.target.dataset.index, playerTwo.getSymbol());
+            setGame.playerOne.getIsPlaying() ? updateBoardState(event.target.dataset.index, setGame.playerOne.getSymbol()) : updateBoardState(event.target.dataset.index, setGame.playerTwo.getSymbol());
             
             // Render board state
             render();
@@ -120,12 +129,12 @@ const gameBoard = (() => {
     }
 
     const switchTurn = () => {
-        if (playerOne.getIsPlaying()) {
-            playerOne.setIsPlaying(false);
-            playerTwo.setIsPlaying(true);
+        if (setGame.playerOne.getIsPlaying()) {
+            setGame.playerOne.setIsPlaying(false);
+            setGame.playerTwo.setIsPlaying(true);
         } else {
-            playerOne.setIsPlaying(true);
-            playerTwo.setIsPlaying(false);
+            setGame.playerOne.setIsPlaying(true);
+            setGame.playerTwo.setIsPlaying(false);
         }
     }
 
@@ -142,20 +151,19 @@ const gameBoard = (() => {
         playerTwoMoves.splice(0, playerTwoMoves.length);
 
         // Reset player prop
-        playerOne.setWinner(false);
-        playerTwo.setWinner(false);
+        setGame.playerOne.setWinner(false);
+        setGame.playerTwo.setWinner(false);
 
-        if (!playerOne.getIsPlaying()) {
-            playerOne.setIsPlaying(true);
-            playerTwo.setIsPlaying(false);
-
+        if (!setGame.playerOne.getIsPlaying()) {
+            setGame.playerOne.setIsPlaying(true);
+            setGame.playerTwo.setIsPlaying(false);
         }
     }
 
     // Manage final board
     const finalBoard = (event) => {
 
-        const whoPlays = playerOne.getIsPlaying();
+        const whoPlays = setGame.playerOne.getIsPlaying();
 
         // Player move
         let index = parseInt(event.target.dataset.index);
@@ -169,7 +177,7 @@ const gameBoard = (() => {
              if (winnerExist) {
                 resetBoardState();
                 render();
-                whoPlays ? playerOne.setWinner(true) : playerTwo.setWinner(true);
+                whoPlays ? setGame.playerOne.setWinner(true) : setGame.playerTwo.setWinner(true);
                 return 'win';
             }
         }
