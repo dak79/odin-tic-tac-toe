@@ -256,5 +256,3 @@ const gameBoard = (() => {
     }
 
 })();
-
-gameDisplay.start();
