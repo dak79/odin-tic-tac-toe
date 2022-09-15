@@ -18,18 +18,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
-    <main class="display">
+    <main id="display">
         <h1>Tic Tac Toe</h1>
         <section id="gameBoard" class="board">
-            <div id="spot-zero" class="spot spot-right spot-bottom" data-row="0" data-column="0" data-index="0"></div>
-            <div id="spot-one" class="spot spot-bottom" data-row="0" data-column="1" data-index="1"></div>
-            <div id="spot-two" class="spot spot-left spot-bottom" data-row="0" data-column="2" data-index="2"></div>
-            <div id="spot-three" class="spot spot-right spot-bottom" data-row="1" data-column="0" data-index="3"></div>
-            <div id="spot-four" class="spot spot-bottom" data-row="1" data-column="1" data-index="4"></div>
-            <div id="spot-five" class="spot spot-left spot-bottom" data-row="1" data-column="2" data-index="5"></div>
-            <div id="spot-six" class="spot spot-right" data-row="2" data-column="0" data-index="6"></div>
-            <div id="spot-seven" class="spot" data-row="2" data-column="1" data-index="7"></div>
-            <div id="spot-eight" class="spot spot-left" data-row="2" data-column="2" data-index="8"></div>
+            <div id="spot-zero" class="spot spot-right spot-bottom" data-index="0"></div>
+            <div id="spot-one" class="spot spot-bottom" data-index="1"></div>
+            <div id="spot-two" class="spot spot-left spot-bottom" data-index="2"></div>
+            <div id="spot-three" class="spot spot-right spot-bottom" data-index="3"></div>
+            <div id="spot-four" class="spot spot-bottom" data-index="4"></div>
+            <div id="spot-five" class="spot spot-left spot-bottom" data-index="5"></div>
+            <div id="spot-six" class="spot spot-right" data-index="6"></div>
+            <div id="spot-seven" class="spot" data-index="7"></div>
+            <div id="spot-eight" class="spot spot-left" data-index="8"></div>
         </section>
         <footer>
             <div class="player-one-set-play">
@@ -44,7 +44,7 @@
             </div>
             <button type="button" id="btn-start" class="btn btn-start">Start</button>
             <div class="player-one-btn">
-                <button type="button" id="btn-change-name-player-one" class="btn btn-change">Change Name</button>
+                <button type="button" id="btn-change-name-player-one" class="btn btn-change" data-btn="player-one-name">Change Name</button>
                 <div class="btn-radio-player-one">
                     <input type="radio" name="radio-player-one" value="player-one" id="radio-human-player-one" checked>
                     <label for="radio-human-player-one">Human</label>
@@ -53,7 +53,7 @@
                 </div>
             </div>
             <div class="player-two-btn">
-                <button type="button" id="btn-change-name-player-two" class="btn btn-change">Change Name</button>
+                <button type="button" id="btn-change-name-player-two" class="btn btn-change" data-btn="player-two-name">Change Name</button>
                 <div class="btn-radio-player-two">
                     <input type="radio" name="radio-player-two" value="human-two" id="radio-human-player-two" checked>
                     <label for="radio-human-player-two">Human</label>

@@ -27,6 +27,7 @@
     --gameBoardBorder: 5px solid var(--zinc-500);
     --standard-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
     --shadow-press-btn: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    --card-shadow: 10px 10px 10px var(--zinc-500)
 }
 
 /* Font */
@@ -236,6 +237,40 @@ footer .player-two-btn .btn-radio-player-two {
     margin: 0 1rem 1rem;
 }
 
+.layer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    z-index: 2;
+    width: 20%;
+    height: 40%;
+}
+
+.card-label {
+    margin-bottom: 1rem;
+}
+
+.card-input {
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.btn-card {
+    padding: 0.5rem 1rem;
+}
+
 /* Style */
 body {
     background-color: var(--zinc-50);
@@ -335,4 +370,27 @@ input[type="radio"]:disabled + label {
 
 .btn-play-first {
     font-size: 1.1rem;
+}
+
+.layer {
+    background-color: rgba(24, 24, 27, 0.5);   
+}
+
+.card {
+    background-color: rgba(250, 250, 250, 0.9);
+    box-shadow: var(--card-shadow);
+    border-radius: 15px;
+}
+
+.card-label {
+    font-size: 1.3rem;
+    color: var(--zinc-800);
+}
+
+.card-input {
+    font-size: 1.3rem;
+} 
+
+.btn-card {
+    font-size: 1.3rem;
 }

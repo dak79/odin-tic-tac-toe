@@ -2,6 +2,7 @@
 const player = (name, symbol, isPlaying) => {
     let winner = false;
     const getName = () => name;
+    const setName = value => name = value;
     const getSymbol = () => symbol;
     const getIsPlaying = () => isPlaying;
     const setIsPlaying = value => isPlaying = value;
@@ -10,6 +11,7 @@ const player = (name, symbol, isPlaying) => {
 
     return {
         getName,
+        setName,
         getSymbol,
         getIsPlaying,
         setIsPlaying,
@@ -20,8 +22,56 @@ const player = (name, symbol, isPlaying) => {
 } 
 
 const setGame = (()=> {
-    const playerOne = player('jim', 'X', true);
-    const playerTwo = player('josh', '0', false);
+
+    const playerOne = player('Player 1', 'X', true);
+    const playerTwo = player('Player 2', '0', false);
+
+    const main = document.querySelector('#display');
+    const changeNameBtns = document.querySelectorAll('.btn-change');
+    
+   changeNameBtns.forEach(button => button.addEventListener('click', changePlayerName));
+    
+    function changePlayerName (event) {
+        const background = document.createElement('div');
+        const card = document.createElement('div');
+        const newNameLabel = document.createElement('label');
+        const newName = document.createElement('input');
+        const btnSave = document.createElement('button');
+        const btnChange = event.target.dataset.btn
+
+        background.classList.add('layer');
+        
+        card.classList.add('card');
+        
+        newNameLabel.setAttribute('for', 'newName');
+        newNameLabel.textContent = 'New Name';
+        newNameLabel.classList.add('card-label');
+
+        newName.setAttribute('type', 'text');
+        newName.setAttribute('id', 'newName');
+        newName.setAttribute('name', 'newName');
+        newName.classList.add('card-input');
+
+        btnSave.setAttribute('type', 'button');
+        btnSave.textContent = 'Save';
+        btnSave.classList.add('btn', 'btn-card');
+
+        btnSave.addEventListener('click', setPlayerName);
+
+        function setPlayerName () {
+            const playerName = document.querySelector(`#${btnChange}`);
+            playerName.textContent = newName.value;
+            btnChange === 'player-one-name' ? playerOne.setName(newName.value) : playerTwo.setName(newName.value);
+            btnSave.removeEventListener('click', setPlayerName);
+            background.remove();
+        }
+
+        main.insertBefore(background, main.firstChild);
+        background.appendChild(card);
+        card.appendChild(newNameLabel);
+        card.appendChild(newName);
+        card.appendChild(btnSave);
+    }
 
     return {
         playerOne,
@@ -38,6 +88,8 @@ const gameDisplay = (() => {
     const start = () => {
 
         const winningDisplay = document.querySelector('.winning-msg');
+
+        //Disable footer buttons
         
         // Reset display
         if (winningDisplay) {
@@ -71,13 +123,17 @@ const gameDisplay = (() => {
             winningText.classList.add('tie-text')
         }
 
-        newGameInfo.textContent = `Click for restart the game`;
+        newGameInfo.textContent = `Click for play again`;
         newGameInfo.classList.add('restart-msg');
 
         wrapper.addEventListener('click', restart) 
         
         function restart() {
             start();
+
+            // Enable footers buttons
+
+
             wrapper.removeEventListener('click', restart);
         }
         
@@ -98,6 +154,11 @@ const gameBoard = (() => {
         null, null, null,
         null, null, null
     ];
+
+    const start = () => {
+        gameDisplay.start();
+        resetBoardState();
+    }
 
     // Store player moves in arrays
     const playerOneMoves = [];
