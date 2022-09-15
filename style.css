@@ -45,9 +45,10 @@ body {
 main {
     display: grid;
     grid: 
-        [row1-start] "header" 1fr [row1-end]
-        [row2-start] "game" 4fr [row2-end]
-        [row3-start] "footer" 1fr [row3-end]
+        [row1-start] "header header header" 1fr [row1-end]
+        [row2-start] "game game game" 4fr [row2-end]
+        [row3-start] "footer footer footer" 1fr [row3-end]
+        / 1fr 1fr 1fr;
     ;
 
     justify-items: center;
@@ -125,10 +126,66 @@ section.board {
 
 footer {
     grid-area: footer;
+    display: grid;
+    grid: 
+        [row1-start] "player-one-name player-two-name btn-start" 1fr [row1-end]
+        [row2-start] "player-one-btn player-two-btn btn-start" 1fr [row2-end]
+        / 1fr 1fr 1fr;
+    width: 100%;
+    height: 100%;
+    justify-items: center;
+    align-items: center;
 }
 
-.separator {
-    margin: 0 1rem;
+footer p.player-one-name {
+    grid-area: player-one-name;
+}
+
+footer p.player-two-name {
+    grid-area: player-two-name;
+}
+
+footer button.btn-start {
+    grid-area: btn-start;
+}
+
+footer .player-one-btn,
+footer .player-two-btn {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    gap: 10px;
+}
+
+footer .player-one-btn {
+    grid-area: player-one-btn;
+    grid: 
+        [row1-start] "player-one-btn-change player-one-btn-radio" 1fr [row1-end]
+        / 1fr 1fr;
+}
+
+footer .player-two-btn {
+    grid-area: player-two-btn;
+    grid: 
+        [row1-start] "player-two-btn-change player-two-btn-radio" 1fr [row1-end]
+        / 1fr 1fr;   
+}
+
+footer .player-one-btn .btn-change-name-player-one {
+    grid-area: player-one-btn-change;
+}
+
+footer .player-one-btn .btn-radio-player-one {
+    grid-area: player-one-btn-radio;
+}
+
+footer .player-two-btn .btn-change-name-player-two {
+    grid-area: player-two-btn-change;
+}
+
+footer .player-two-btn .btn-radio-player-two {
+    grid-area: player-two-btn-radio;
 }
 
 /* Style */
