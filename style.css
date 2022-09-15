@@ -216,8 +216,9 @@ main {
     box-shadow: var(--standard-shadow);
 }
 
-h1 {
-    color: var(--zinc-900);
+h1,
+.player-name-text {
+    color: var(--zinc-800);
 }
 
 .winning-text,
@@ -298,3 +299,5 @@ input[type="radio"]:checked + label {
     color: var(--emerald-700);
     
 }
+
+
