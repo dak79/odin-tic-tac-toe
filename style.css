@@ -296,8 +296,11 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked + label {
-    color: var(--emerald-700);
-    
+    color: var(--emerald-700);  
+}
+
+input[type="radio"]:disabled + label {
+    color:var(--zinc-400);
 }
 
 
