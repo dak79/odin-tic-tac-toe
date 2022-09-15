@@ -172,23 +172,27 @@ footer .player-two-btn {
     grid: 
         [row1-start] "player-two-btn-change player-two-btn-radio" 1fr [row1-end]
         / 1fr 1fr; 
-    justify-items: center;  
+    
 }
 
 footer .player-one-btn #btn-change-name-player-one {
     grid-area: player-one-btn-change;   
+    justify-self: flex-end;
 }
 
 footer .player-one-btn .btn-radio-player-one {
     grid-area: player-one-btn-radio;
+    justify-self: flex-start;
 }
 
 footer .player-two-btn #btn-change-name-player-two {
     grid-area: player-two-btn-change;
+    justify-self: flex-end;
 }
 
 footer .player-two-btn .btn-radio-player-two {
     grid-area: player-two-btn-radio;
+    justify-self: flex-start;
 }
 
 .btn-start {
@@ -198,7 +202,7 @@ footer .player-two-btn .btn-radio-player-two {
 .btn-change {
     padding: 1rem 2rem;
     max-width: 10rem;
-    margin: 0 1rem 1rem 1rem;
+    margin: 0 1rem 1rem;
 }
 
 
@@ -286,3 +290,11 @@ footer {
     font-size: 1.5rem;
 }
 
+input[type="radio"] {
+    appearance: none;
+}
+
+input[type="radio"]:checked + label {
+    color: var(--emerald-700);
+    
+}
