@@ -25,6 +25,8 @@
     --orange-700: #c2410c;
 
     --gameBoardBorder: 5px solid var(--zinc-500);
+    --standard-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    --shadow-press-btn: 5px 5px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Font */
@@ -137,15 +139,15 @@ footer {
     align-items: center;
 }
 
-footer p.player-one-name {
+footer p#player-one-name {
     grid-area: player-one-name;
 }
 
-footer p.player-two-name {
+footer p#player-two-name {
     grid-area: player-two-name;
 }
 
-footer button.btn-start {
+footer button#btn-start {
     grid-area: btn-start;
 }
 
@@ -169,24 +171,36 @@ footer .player-two-btn {
     grid-area: player-two-btn;
     grid: 
         [row1-start] "player-two-btn-change player-two-btn-radio" 1fr [row1-end]
-        / 1fr 1fr;   
+        / 1fr 1fr; 
+    justify-items: center;  
 }
 
-footer .player-one-btn .btn-change-name-player-one {
-    grid-area: player-one-btn-change;
+footer .player-one-btn #btn-change-name-player-one {
+    grid-area: player-one-btn-change;   
 }
 
 footer .player-one-btn .btn-radio-player-one {
     grid-area: player-one-btn-radio;
 }
 
-footer .player-two-btn .btn-change-name-player-two {
+footer .player-two-btn #btn-change-name-player-two {
     grid-area: player-two-btn-change;
 }
 
 footer .player-two-btn .btn-radio-player-two {
     grid-area: player-two-btn-radio;
 }
+
+.btn-start {
+    padding: 2rem 4rem;
+}
+
+.btn-change {
+    padding: 1rem 2rem;
+    max-width: 10rem;
+    margin: 0 1rem 1rem 1rem;
+}
+
 
 /* Style */
 body {
@@ -195,7 +209,7 @@ body {
 
 main {
     background-color: var(--zinc-100);
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--standard-shadow);
 }
 
 h1 {
@@ -247,3 +261,28 @@ footer {
     font-weight: 700;
     font-size: 1.5rem;
 }
+
+.btn {
+    background-color: var(--zinc-500);
+    color: var(--zinc-50);
+    box-shadow: var(--standard-shadow);
+    border: none;
+    border-radius: 15px;
+    font-weight: 700;
+}
+
+.btn:hover {
+    background-color: var(--zinc-700)
+}
+
+.btn:active {
+  background-color: var(--zinc-700);
+  box-shadow: var(--shadow-press-btn);
+  transform: translateY(5px);
+
+}
+
+.btn-start {
+    font-size: 1.5rem;
+}
+
