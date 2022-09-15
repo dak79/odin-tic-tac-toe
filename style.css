@@ -21,6 +21,7 @@
     --zinc-800: #27272a;
     --zinc-900: #18181b;
 
+    --emerald-400: #34d399;
     --emerald-700: #047857;
     --orange-700: #c2410c;
 
@@ -352,6 +353,14 @@ footer {
 
 }
 
+.btn:disabled {
+    opacity: 0.5;
+}
+
+.btn:disabled:hover {
+    background-color: var(--zinc-500);
+}
+
 .btn-start {
     font-size: 1.5rem;
 }
@@ -365,7 +374,12 @@ input[type="radio"]:checked + label {
 }
 
 input[type="radio"]:disabled + label {
-    color:var(--zinc-400);
+    opacity: 0.5;
+}
+
+input[type="radio"]:disabled:checked + label {
+    color:var(--emerald-700);
+    opacity: 0.5;
 }
 
 .btn-play-first {

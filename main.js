@@ -28,9 +28,13 @@ const setGame = (()=> {
 
     const main = document.querySelector('#display');
     const sectionGameBoard = document.querySelector('#gameBoard');
+    const playFirst = document.querySelectorAll('input[name=radio-play-first]')
     const changeNameBtns = document.querySelectorAll('.btn-change');
-    
+    const btnStart = document.querySelector('#btn-start');
+
    changeNameBtns.forEach(button => button.addEventListener('click', changePlayerName));
+
+   playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
     
     function changePlayerName (event) {
         const background = document.createElement('div');
@@ -74,11 +78,30 @@ const setGame = (()=> {
         card.appendChild(btnSave);
     }
 
+    function setPlayFirst(event) {
+        if (event.target.value === 'player-one-play-first') {
+            playerOne.setIsPlaying(true);
+            playerTwo.setIsPlaying(false);
+        } else {
+            playerOne.setIsPlaying(false);
+            playerTwo.setIsPlaying(true);
+        }
+    }
+
+    const inGameDisplay = () => {
+        playFirst.forEach(button => button.disabled = true);
+        changeNameBtns.forEach(button => button.disabled = true);
+        btnStart.disabled = true;
+    }
+
     const restartDisplay = () => {
 
         const winningDisplay = document.querySelector('.winning-msg');
 
-        //Disable footer buttons
+        //Enable footer buttons
+        playFirst.forEach(button => button.disabled = false);
+        changeNameBtns.forEach(button => button.disabled = false);
+        btnStart.disabled = false;
         
         // Reset display
         if (winningDisplay) {
@@ -119,10 +142,6 @@ const setGame = (()=> {
         
         function restart() {
             restartDisplay();
-
-            // Enable footers buttons
-
-
             wrapper.removeEventListener('click', restart);
         }
         
@@ -134,6 +153,7 @@ const setGame = (()=> {
     return {
         playerOne,
         playerTwo,
+        inGameDisplay,
         restartDisplay,
         endDisplay
     }
@@ -147,9 +167,20 @@ const gameBoard = (() => {
         null, null, null
     ];
 
-    const start = () => {
+    const btnStart = document.querySelector('#btn-start');
+    const spots = document.querySelectorAll('.spot');
+    
+    btnStart.addEventListener('click', startGameState);
+    
+    
+
+    function startGameState() {
         setGame.restartDisplay();
         resetBoardState();
+        setGame.inGameDisplay();
+    
+        // Attach event listeners for players
+        spots.forEach(spot => spot.addEventListener('click', play));
     }
 
     // Store player moves in arrays
@@ -159,12 +190,6 @@ const gameBoard = (() => {
     // Array of winning patterns
     const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
     
-    // Get DOM elements
-    const spots = document.querySelectorAll('.spot');
-    
-    // Attach event listeners
-    spots.forEach(spot => spot.addEventListener('click', play));
-
     function play(event) {
         if (!event.target.textContent) {
             
