@@ -1,13 +1,36 @@
-/* CSS Reset */
+/* Index.
+* 1. CSS Reset.
+* 2. CSS Variable and color palette.
+* 3. Font.
+* 4. Layout: 
+*   a. Body and Main
+*   b. Board
+*   c. End game state on section.board
+*   d. Footer
+*   e. Player Name and Play Again
+*   f. Start button
+*   g. Change Name and switch Human / Bot buttons
+*   h. Change Name card
+* 5. Style:
+*   a. Body and Main
+*   b. Header and Player Name Text
+*   c. End Game State
+*   d. Board
+*   e. Footer
+*   f. Buttons
+*   g. Radio Buttons
+*   h. Change Name Card
+*/
+
+/* 1. CSS Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/*  CSS variables
+/*  2. CSS variables
     Color Palette: Tailwind Zinc 
-
 */
 :root {
     --zinc-50: #fafafa;
@@ -31,12 +54,14 @@
     --card-shadow: 10px 10px 10px var(--zinc-500)
 }
 
-/* Font */
+/* 3. Font */
 body {
     font-family: 'Roboto', sans-serif;
 }
 
-/* Layout */
+/* 4. Layout */
+/* a. Body and Main */
+
 body {
     display: flex;
     justify-content: center;
@@ -66,6 +91,7 @@ h1 {
     grid-area: header;
 }
 
+/* b. Board */
 section.board {
     grid-area: game;
     display: grid;
@@ -77,18 +103,6 @@ section.board {
         
     width: 40%;
     height: 100%;
-}
-
-.winning-msg {
-    grid-area: game;;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    justify-items: center;
-}
-
-.invisible {
-    display: none;
 }
 
 .spot {
@@ -129,6 +143,20 @@ section.board {
     grid-area: spot8;
 }
 
+/* c. End game state on section.board */
+.winning-msg {
+    grid-area: game;;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
+}
+
+.invisible {
+    display: none;
+}
+
+/* d. Footer*/
 footer {
     grid-area: footer;
     display: grid;
@@ -142,6 +170,7 @@ footer {
     align-items: center;
 }
 
+/* e. Player name and play again */
 footer div.player-one-set-play,
 footer div.player-two-set-play {
     display: grid;
@@ -181,10 +210,16 @@ div.player-two-set-play #radio-player-two-play-first {
     grid-area: player-two-play-first-btn;
 }
 
+/* f. Start button */
 footer button#btn-start {
     grid-area: btn-start;
 }
 
+.btn-start {
+    padding: 2rem 4rem;
+}
+
+/* g. Change Name and switch Human / Bot buttons */
 footer .player-one-btn,
 footer .player-two-btn {
     display: grid;
@@ -228,16 +263,13 @@ footer .player-two-btn .btn-radio-player-two {
     justify-self: flex-start;
 }
 
-.btn-start {
-    padding: 2rem 4rem;
-}
-
 .btn-change {
     padding: 1rem 2rem;
     max-width: 10rem;
     margin: 0 1rem 1rem;
 }
 
+/* h. Change Name card */
 .layer {
     display: flex;
     justify-content: center;
@@ -272,7 +304,8 @@ footer .player-two-btn .btn-radio-player-two {
     padding: 0.5rem 1rem;
 }
 
-/* Style */
+/* 5. Style */
+/* a. Body and Main */
 body {
     background-color: var(--zinc-50);
 }
@@ -282,11 +315,13 @@ main {
     box-shadow: var(--standard-shadow);
 }
 
+/* b. Header and Player Name Text */
 h1,
 .player-name-text {
     color: var(--zinc-800);
 }
 
+/* c. End Game State */
 .winning-text,
 .tie-text {
     font-size: 4rem;
@@ -306,10 +341,7 @@ h1,
     font-weight: 700;
 }
 
-label {
-    text-align: center;
-}
-
+/* d. Board */
 .spot {
     color: var(--zinc-900);
     font-size: 3rem;
@@ -327,12 +359,15 @@ label {
     border-bottom: var(--gameBoardBorder);
 }
 
+/* e. Footer*/
+
 footer {
     color: var(--zinc-500);
     font-weight: 700;
     font-size: 1.5rem;
 }
 
+/* f. Buttons */
 .btn {
     background-color: var(--zinc-500);
     color: var(--zinc-50);
@@ -365,6 +400,7 @@ footer {
     font-size: 1.5rem;
 }
 
+/* g. Radio Buttons */
 input[type="radio"] {
     appearance: none;
 }
@@ -386,6 +422,7 @@ input[type="radio"]:disabled:checked + label {
     font-size: 1.1rem;
 }
 
+/* h. Change Name Card*/
 .layer {
     background-color: rgba(24, 24, 27, 0.5);   
 }
