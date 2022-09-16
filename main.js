@@ -82,13 +82,10 @@ const setGame = (()=> {
     }
 
     function setPlayFirst(event) {
-        // console.log(event.target.value);
         if (event.target.value === 'player-one-play-first') {
-            // console.log('p1');
             playerOne.setIsPlaying(true);
             playerTwo.setIsPlaying(false);
         } else {
-            // console.log('p2');
             playerOne.setIsPlaying(false);
             playerTwo.setIsPlaying(true);
         }
@@ -102,12 +99,36 @@ const setGame = (()=> {
         playerTwo.setIsPlaying(false);
     }
 
+    // Reset footer buttons
+    const resetFooterBtn = () => {
+        playFirst.forEach((button, index) => {
+            button.disabled = false
+    
+            if (!button.checked && index === 0) {
+                button.checked = true;
+            }
+            if (button.checked && index === 1 ) {
+                button.checked = false;
+            }
+        });
+        
+        changeNameBtns.forEach(button => button.disabled = false);
+        btnStart.disabled = false;
+    }
+
+    // Disable footer buttons 
+    const disableFooterBtn = () => {
+        playFirst.forEach(button => button.disabled = true);
+        changeNameBtns.forEach(button => button.disabled = true);
+        btnStart.disabled = true;
+    }
+
     return {
         playerOne,
         playerTwo,
         resetPlayer,
-        playFirst,
-        changeNameBtns,
+        resetFooterBtn,
+        disableFooterBtn,
         btnStart
     };
 })();
@@ -123,26 +144,13 @@ const gameDisplay = (() => {
         // Get DOM elements
         const winningDisplay = document.querySelector('.winning-msg');
 
-        // Reset footer buttons-------------------------------
-        setGame.playFirst.forEach((button, index) => {
-            button.disabled = false
+        setGame.resetFooterBtn();
 
-            if (!button.checked && index === 0) {
-                button.checked = true;
-            }
-            if (button.checked && index === 1 ) {
-                button.checked = false;
-            }
-        });
-        setGame.changeNameBtns.forEach(button => button.disabled = false);
-        setGame.btnStart.disabled = false;
-        
-        // Reset display
+        // Reset winning display
         if (winningDisplay) {
             winningDisplay.remove(); 
         }
 
-        // Reset winning display
         if (sectionGameBoard.className === 'invisible') {
             sectionGameBoard.classList.add('board');
             sectionGameBoard.classList.remove('invisible');
@@ -154,9 +162,7 @@ const gameDisplay = (() => {
 
     const inGame = () => {
         infoText.classList.add('invisible');
-        setGame.playFirst.forEach(button => button.disabled = true);
-        setGame.changeNameBtns.forEach(button => button.disabled = true);
-        setGame.btnStart.disabled = true;
+        setGame.disableFooterBtn();
     }
 
     const end = (result) => {
@@ -261,7 +267,7 @@ const gameBoard = (() => {
                 }
             }
 
-            // // Search for a tie
+            //Search for a tie
             const availableMoves = boardState.includes(null);
             
             if (!availableMoves) {
@@ -288,7 +294,7 @@ const gameBoard = (() => {
         play,
         render,
         resetBoardState
-    }
+    };
 })();
 
 const game = (() => {
@@ -323,5 +329,5 @@ const game = (() => {
     return {
         switchTurn,
         end
-    }
+    };
 })();
