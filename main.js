@@ -16,7 +16,7 @@ const player = (name, symbol, isPlaying) => {
         setIsPlaying,
         getWinner,
         setWinner
-    }
+    };
 } 
 
 const setGame = (()=> {
@@ -26,7 +26,7 @@ const setGame = (()=> {
     const playerTwo = player('Player 2', '0', false);
 
     // Get DOM Elements
-    const playFirst = document.querySelectorAll('input[name=radio-play-first]')
+    const playFirst = document.querySelectorAll('input[name=radio-play-first]');
     const changeNameBtns = document.querySelectorAll('.btn-change');
     const btnStart = document.querySelector('#btn-start');
     
@@ -82,22 +82,34 @@ const setGame = (()=> {
     }
 
     function setPlayFirst(event) {
+        // console.log(event.target.value);
         if (event.target.value === 'player-one-play-first') {
+            // console.log('p1');
             playerOne.setIsPlaying(true);
             playerTwo.setIsPlaying(false);
         } else {
+            // console.log('p2');
             playerOne.setIsPlaying(false);
             playerTwo.setIsPlaying(true);
         }
     }
 
+    // Reset player prop
+    const resetPlayer = () => {
+        playerOne.setWinner(false);
+        playerTwo.setWinner(false);
+        playerOne.setIsPlaying(true);
+        playerTwo.setIsPlaying(false);
+    }
+
     return {
         playerOne,
         playerTwo,
+        resetPlayer,
         playFirst,
         changeNameBtns,
         btnStart
-    }
+    };
 })();
 
 const gameDisplay = (() => {
@@ -111,8 +123,17 @@ const gameDisplay = (() => {
         // Get DOM elements
         const winningDisplay = document.querySelector('.winning-msg');
 
-        //Enable footer buttons
-        setGame.playFirst.forEach(button => button.disabled = false);
+        // Reset footer buttons-------------------------------
+        setGame.playFirst.forEach((button, index) => {
+            button.disabled = false
+
+            if (!button.checked && index === 0) {
+                button.checked = true;
+            }
+            if (button.checked && index === 1 ) {
+                button.checked = false;
+            }
+        });
         setGame.changeNameBtns.forEach(button => button.disabled = false);
         setGame.btnStart.disabled = false;
         
@@ -143,29 +164,29 @@ const gameDisplay = (() => {
         // Create result display
         const header = document.querySelector('header');
         const wrapper = document.createElement('div');
-        const winningText = document.createElement('p')
-        const newGameInfo = document.createElement('p')
+        const winningText = document.createElement('p');
+        const newGameInfo = document.createElement('p');
         
         sectionGameBoard.classList.add('invisible');
         sectionGameBoard.classList.remove('board');
         
-        wrapper.classList.add('winning-msg')
+        wrapper.classList.add('winning-msg');
         
         if (result === 'win') {
             winningText.textContent = `${setGame.playerOne.getWinner() ? setGame.playerOne.getName() : setGame.playerTwo.getName()} wins the match`;
             winningText.classList.add('winning-text');
         } else {
             winningText.textContent = `It's a tie`;
-            winningText.classList.add('tie-text')
+            winningText.classList.add('tie-text');
         }
 
         newGameInfo.textContent = `Click for play again`;
         newGameInfo.classList.add('restart-msg');
 
-        wrapper.addEventListener('click', playAgain) 
+        wrapper.addEventListener('click', playAgain); 
         
         function playAgain() {
-            wrapper.removeEventListener('click', restart);
+            wrapper.removeEventListener('click', playAgain);
             restart();
         }
 
@@ -174,12 +195,12 @@ const gameDisplay = (() => {
         wrapper.appendChild(winningText);
         wrapper.appendChild(newGameInfo);
     } 
-    
+
     return {
         restart,
         inGame,
         end
-    }
+    };
 })();
 
 const gameBoard = (() => {
@@ -191,26 +212,7 @@ const gameBoard = (() => {
 
     // Get DOM elements
     const spots = document.querySelectorAll('.spot');
-    
-    // Listener
-    setGame.btnStart.addEventListener('click', startGameState);
-    
-    function startGameState() {
-        gameDisplay.restart();
-        resetBoardState();
-        gameDisplay.inGame();
-    
-        // Attach event listeners for players
-        spots.forEach(spot => spot.addEventListener('click', play));
-    }
-
-    // Store player moves in arrays
-    const playerOneMoves = [];
-    const playerTwoMoves = [];
-    
-    // Array of winning patterns
-    const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-    
+        
     function play(event) {
         if (!event.target.textContent) {
             
@@ -219,15 +221,89 @@ const gameBoard = (() => {
             
             // Render board state
             render();
-            
+    
             const nextMove = finalBoard(event);
 
             // Next move
-            nextMove === 'next' ? switchTurn() : gameDisplay.end(nextMove);
+            nextMove === 'next' ? game.switchTurn() : game.end(nextMove);
         }
     }
+      
+    // Update boardState array
+    const updateBoardState = (update, symbol) => boardState.splice(update, 1, symbol);
+    
+    // Render boardState array
+    const render = () => spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
+    
+    // Store player moves in arrays
+    const playerOneMoves = [];
+    const playerTwoMoves = [];
+    
+    // Array of winning patterns
+    const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+    
+    // Manage final board
+    const finalBoard = (event) => {
 
-    const switchTurn = () => {
+        const whoPlays = setGame.playerOne.getIsPlaying();
+
+        let index = parseInt(event.target.dataset.index);
+        whoPlays ? playerOneMoves.push(index) : playerTwoMoves.push(index);
+        
+         // Search for a winner
+        const searchWinnerOrTie = () => {
+            for (let i = 0; i < 8; i++) { 
+                const winnerExist = winningPatterns[i].every(winningPattern => whoPlays ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern));
+                
+                if (winnerExist) {
+                    whoPlays ? setGame.playerOne.setWinner(true) : setGame.playerTwo.setWinner(true);
+                    return 'win';
+                }
+            }
+
+            // // Search for a tie
+            const availableMoves = boardState.includes(null);
+            
+            if (!availableMoves) {
+                return 'tie';
+            }
+        }
+        const winOrTie = searchWinnerOrTie();
+
+        return winOrTie ? winOrTie : 'next';
+    }
+
+    // Reset state
+    const resetBoardState = () => {
+        boardState.forEach((spot, index) => boardState[index] = null);
+        playerOneMoves.splice(0, playerOneMoves.length);
+        playerTwoMoves.splice(0, playerTwoMoves.length);
+       
+        // Remove Listener
+        spots.forEach(spot => spot.removeEventListener('click', gameBoard.play));
+    }
+
+    return {
+        spots,
+        play,
+        render,
+        resetBoardState
+    }
+})();
+
+const game = (() => {
+
+    // Listener
+    setGame.btnStart.addEventListener('click', start);
+    
+    function start() {
+        gameDisplay.inGame();
+    
+        // Attach event listeners for players
+        gameBoard.spots.forEach(spot => spot.addEventListener('click', gameBoard.play));
+    }
+
+    function switchTurn () {
         if (setGame.playerOne.getIsPlaying()) {
             setGame.playerOne.setIsPlaying(false);
             setGame.playerTwo.setIsPlaying(true);
@@ -237,62 +313,15 @@ const gameBoard = (() => {
         }
     }
 
-    // Update boardState array
-    const updateBoardState = (update, symbol) => boardState.splice(update, 1, symbol);
-        
-    // Render boardState array
-    const render = () => spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
-    
-    // Reset state
-    const resetBoardState = () => {
-        boardState.forEach((spot, index) => boardState[index] = null);
-        playerOneMoves.splice(0, playerOneMoves.length);
-        playerTwoMoves.splice(0, playerTwoMoves.length);
-
-        // Reset player prop
-        setGame.playerOne.setWinner(false);
-        setGame.playerTwo.setWinner(false);
-
-        if (!setGame.playerOne.getIsPlaying()) {
-            setGame.playerOne.setIsPlaying(true);
-            setGame.playerTwo.setIsPlaying(false);
-        }
-
-        // Remove Listener
-        spots.forEach(spot => spot.removeEventListener('click', play));
+    function end (nextState) {
+        gameDisplay.end(nextState);
+        gameBoard.resetBoardState();
+        gameBoard.render();
+        setGame.resetPlayer();
     }
 
-    // Manage final board
-    const finalBoard = (event) => {
-
-        const whoPlays = setGame.playerOne.getIsPlaying();
-
-        // Player move
-        let index = parseInt(event.target.dataset.index);
-        
-        whoPlays ? playerOneMoves.push(index) : playerTwoMoves.push(index);
-        
-        // Search for a winner
-        for (let i = 0; i < 8; i++) { 
-            const winnerExist = winningPatterns[i].every(winningPattern => whoPlays ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern))
-
-             if (winnerExist) {
-                resetBoardState();
-                render();
-                whoPlays ? setGame.playerOne.setWinner(true) : setGame.playerTwo.setWinner(true);
-                return 'win';
-            }
-        }
-
-        // Search for a tie
-        const availableMoves = boardState.includes(null);
-
-        if (!availableMoves) {
-            resetBoardState();
-            render();
-            return 'tie';
-        }
-
-        return 'next';
+    return {
+        switchTurn,
+        end
     }
 })();
