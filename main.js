@@ -35,9 +35,9 @@ const setGame = (()=> {
     playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
     
     function changePlayerName (event) {
-        const main = document.querySelector('#display');
-
+        
         // Create card for entering new name
+        const main = document.querySelector('#display');
         const background = document.createElement('div');
         const card = document.createElement('div');
         const newNameLabel = document.createElement('label');
@@ -104,9 +104,11 @@ const gameDisplay = (() => {
 
     // Get DOM element
     const sectionGameBoard = document.querySelector('#gameBoard');
-    
+    const infoText = document.querySelector('#info-text');
+
     const restart = () => {
 
+        // Get DOM elements
         const winningDisplay = document.querySelector('.winning-msg');
 
         //Enable footer buttons
@@ -124,9 +126,13 @@ const gameDisplay = (() => {
             sectionGameBoard.classList.add('board');
             sectionGameBoard.classList.remove('invisible');
         }
+
+        // Display info text
+        infoText.classList.remove('invisible');
     }
 
     const inGame = () => {
+        infoText.classList.add('invisible');
         setGame.playFirst.forEach(button => button.disabled = true);
         setGame.changeNameBtns.forEach(button => button.disabled = true);
         setGame.btnStart.disabled = true;
@@ -135,7 +141,7 @@ const gameDisplay = (() => {
     const end = (result) => {
 
         // Create result display
-        const h1 = document.querySelector('h1')
+        const header = document.querySelector('header');
         const wrapper = document.createElement('div');
         const winningText = document.createElement('p')
         const newGameInfo = document.createElement('p')
@@ -159,12 +165,12 @@ const gameDisplay = (() => {
         wrapper.addEventListener('click', playAgain) 
         
         function playAgain() {
-            restart();
             wrapper.removeEventListener('click', restart);
+            restart();
         }
 
         // Append result display on DOM
-        h1.after(wrapper);
+        header.after(wrapper);
         wrapper.appendChild(winningText);
         wrapper.appendChild(newGameInfo);
     } 

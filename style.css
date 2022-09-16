@@ -87,7 +87,7 @@ main {
     height: 80vh;
 } 
 
-h1 {
+main header {
     grid-area: header;
 }
 
@@ -319,6 +319,10 @@ main {
 h1,
 .player-name-text {
     color: var(--zinc-800);
+}
+
+header p {
+    color: var(--zinc-700);
 }
 
 /* c. End Game State */
