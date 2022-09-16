@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
 
+    <!-- FavIcon-->
     <link rel="shortcut icon" href="assets/favicon.svg" type="image/x-icon">
 
     <!-- CSS stylesheet -->
@@ -19,51 +20,51 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
-<body>
-    <main id="display">
-        <h1>Tic Tac Toe</h1>
-        <section id="gameBoard" class="board">
-            <div id="spot-zero" class="spot spot-right spot-bottom" data-index="0"></div>
-            <div id="spot-one" class="spot spot-bottom" data-index="1"></div>
-            <div id="spot-two" class="spot spot-left spot-bottom" data-index="2"></div>
-            <div id="spot-three" class="spot spot-right spot-bottom" data-index="3"></div>
-            <div id="spot-four" class="spot spot-bottom" data-index="4"></div>
-            <div id="spot-five" class="spot spot-left spot-bottom" data-index="5"></div>
-            <div id="spot-six" class="spot spot-right" data-index="6"></div>
-            <div id="spot-seven" class="spot" data-index="7"></div>
-            <div id="spot-eight" class="spot spot-left" data-index="8"></div>
-        </section>
-        <footer>
-            <div class="player-one-set-play">
-                <p id="player-one-name" class="player-name-text">Player 1</p> 
-                <input type="radio" name="radio-play-first" value="player-one-play-first" id="radio-player-one-play-first" checked>
-                <label for="radio-player-one-play-first" id="radio-player-one-play-first" class="btn-play-first">Play First</label>
-            </div>
-            <div class="player-two-set-play">
-                <p id="player-two-name" class="player-name-text">Player 2</p>
-                <input type="radio" name="radio-play-first" value="player-two-play-first" id="radio-player-two-play-first">
-                <label for="radio-player-two-play-first" id="radio-player-two-play-first" class="btn-play-first">Play First</label>
-            </div>
-            <button type="button" id="btn-start" class="btn btn-start">Start</button>
-            <div class="player-one-btn">
-                <button type="button" id="btn-change-name-player-one" class="btn btn-change" data-btn="player-one-name">Change Name</button>
-                <div class="btn-radio-player-one">
-                    <input type="radio" name="radio-player-one" value="player-one" id="radio-human-player-one" checked>
-                    <label for="radio-human-player-one">Human</label>
-                    <input type="radio" name="radio-player-one" id="radio-bot-player-one" value="bot-one" disabled>
-                    <label for="radio-bot-player-one">Bot</label>
+    <body>
+        <main id="display">
+            <h1>Tic Tac Toe</h1>
+            <section id="gameBoard" class="board">
+                <div id="spot-zero" class="spot spot-right spot-bottom" data-index="0"></div>
+                <div id="spot-one" class="spot spot-bottom" data-index="1"></div>
+                <div id="spot-two" class="spot spot-left spot-bottom" data-index="2"></div>
+                <div id="spot-three" class="spot spot-right spot-bottom" data-index="3"></div>
+                <div id="spot-four" class="spot spot-bottom" data-index="4"></div>
+                <div id="spot-five" class="spot spot-left spot-bottom" data-index="5"></div>
+                <div id="spot-six" class="spot spot-right" data-index="6"></div>
+                <div id="spot-seven" class="spot" data-index="7"></div>
+                <div id="spot-eight" class="spot spot-left" data-index="8"></div>
+            </section>
+            <footer>
+                <div class="player-one-set-play">
+                    <p id="player-one-name" class="player-name-text">Player 1</p> 
+                    <input type="radio" name="radio-play-first" value="player-one-play-first" id="radio-player-one-play-first" checked>
+                    <label for="radio-player-one-play-first" id="radio-player-one-play-first" class="btn-play-first">Play First</label>
                 </div>
-            </div>
-            <div class="player-two-btn">
-                <button type="button" id="btn-change-name-player-two" class="btn btn-change" data-btn="player-two-name">Change Name</button>
-                <div class="btn-radio-player-two">
-                    <input type="radio" name="radio-player-two" value="human-two" id="radio-human-player-two" checked>
-                    <label for="radio-human-player-two">Human</label>
-                    <input type="radio" name="radio-player-two" value="bot-two" id="radio-bot-player-two" disabled>
-                    <label for="radio-bot-player-two">Bot</label>
+                <div class="player-two-set-play">
+                    <p id="player-two-name" class="player-name-text">Player 2</p>
+                    <input type="radio" name="radio-play-first" value="player-two-play-first" id="radio-player-two-play-first">
+                    <label for="radio-player-two-play-first" id="radio-player-two-play-first" class="btn-play-first">Play First</label>
                 </div>
-            </div>
-        </footer>
-    </main>
-</body>
+                <button type="button" id="btn-start" class="btn btn-start">Start</button>
+                <div class="player-one-btn">
+                    <button type="button" id="btn-change-name-player-one" class="btn btn-change" data-btn="player-one-name">Change Name</button>
+                    <div class="btn-radio-player-one">
+                        <input type="radio" name="radio-player-one" value="player-one" id="radio-human-player-one" checked>
+                        <label for="radio-human-player-one">Human</label>
+                        <input type="radio" name="radio-player-one" id="radio-bot-player-one" value="bot-one" disabled>
+                        <label for="radio-bot-player-one">Bot</label>
+                    </div>
+                </div>
+                <div class="player-two-btn">
+                    <button type="button" id="btn-change-name-player-two" class="btn btn-change" data-btn="player-two-name">Change Name</button>
+                    <div class="btn-radio-player-two">
+                        <input type="radio" name="radio-player-two" value="human-two" id="radio-human-player-two" checked>
+                        <label for="radio-human-player-two">Human</label>
+                        <input type="radio" name="radio-player-two" value="bot-two" id="radio-bot-player-two" disabled>
+                        <label for="radio-bot-player-two">Bot</label>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </body>
 </html>
