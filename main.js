@@ -1,4 +1,3 @@
-// Factory function for player: name, symbol, isPlaying, setIsPlaying
 const player = (name, symbol, isPlaying) => {
     let winner = false;
     const getName = () => name;
@@ -18,7 +17,6 @@ const player = (name, symbol, isPlaying) => {
         getWinner,
         setWinner
     }
-
 } 
 
 const setGame = (()=> {
@@ -28,18 +26,16 @@ const setGame = (()=> {
     const playerTwo = player('Player 2', '0', false);
 
     // Get DOM Elements
-    const main = document.querySelector('#display');
-    const sectionGameBoard = document.querySelector('#gameBoard');
     const playFirst = document.querySelectorAll('input[name=radio-play-first]')
     const changeNameBtns = document.querySelectorAll('.btn-change');
     const btnStart = document.querySelector('#btn-start');
-    const playerName = document.querySelectorAll('.player-name-text');
     
     // Listeners
     changeNameBtns.forEach(button => button.addEventListener('click', changePlayerName));
     playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
     
     function changePlayerName (event) {
+        const main = document.querySelector('#display');
 
         // Create card for entering new name
         const background = document.createElement('div');
@@ -47,7 +43,7 @@ const setGame = (()=> {
         const newNameLabel = document.createElement('label');
         const newName = document.createElement('input');
         const btnSave = document.createElement('button');
-        const btnChange = event.target.dataset.btn
+        const btnChange = event.target.dataset.btn;
 
         background.classList.add('layer');
         
@@ -95,25 +91,32 @@ const setGame = (()=> {
         }
     }
 
-    const inGameDisplay = () => {
-        playFirst.forEach(button => button.disabled = true);
-        changeNameBtns.forEach(button => button.disabled = true);
-        btnStart.disabled = true;
+    return {
+        playerOne,
+        playerTwo,
+        playFirst,
+        changeNameBtns,
+        btnStart
     }
+})();
 
-    const restartDisplay = () => {
+const gameDisplay = (() => {
+
+    // Get DOM element
+    const sectionGameBoard = document.querySelector('#gameBoard');
+    
+    const restart = () => {
 
         const winningDisplay = document.querySelector('.winning-msg');
 
         //Enable footer buttons
-        playFirst.forEach(button => button.disabled = false);
-        changeNameBtns.forEach(button => button.disabled = false);
-        btnStart.disabled = false;
+        setGame.playFirst.forEach(button => button.disabled = false);
+        setGame.changeNameBtns.forEach(button => button.disabled = false);
+        setGame.btnStart.disabled = false;
         
         // Reset display
         if (winningDisplay) {
-            winningDisplay.remove();
-            
+            winningDisplay.remove(); 
         }
 
         // Reset winning display
@@ -123,7 +126,13 @@ const setGame = (()=> {
         }
     }
 
-    const endDisplay = (result) => {
+    const inGame = () => {
+        setGame.playFirst.forEach(button => button.disabled = true);
+        setGame.changeNameBtns.forEach(button => button.disabled = true);
+        setGame.btnStart.disabled = true;
+    }
+
+    const end = (result) => {
 
         // Create result display
         const h1 = document.querySelector('h1')
@@ -147,10 +156,10 @@ const setGame = (()=> {
         newGameInfo.textContent = `Click for play again`;
         newGameInfo.classList.add('restart-msg');
 
-        wrapper.addEventListener('click', restart) 
+        wrapper.addEventListener('click', playAgain) 
         
-        function restart() {
-            restartDisplay();
+        function playAgain() {
+            restart();
             wrapper.removeEventListener('click', restart);
         }
 
@@ -159,15 +168,12 @@ const setGame = (()=> {
         wrapper.appendChild(winningText);
         wrapper.appendChild(newGameInfo);
     } 
-
+    
     return {
-        playerOne,
-        playerTwo,
-        inGameDisplay,
-        restartDisplay,
-        endDisplay
+        restart,
+        inGame,
+        end
     }
-
 })();
 
 const gameBoard = (() => {
@@ -178,16 +184,15 @@ const gameBoard = (() => {
     ];
 
     // Get DOM elements
-    const btnStart = document.querySelector('#btn-start');
     const spots = document.querySelectorAll('.spot');
     
     // Listener
-    btnStart.addEventListener('click', startGameState);
+    setGame.btnStart.addEventListener('click', startGameState);
     
     function startGameState() {
-        setGame.restartDisplay();
+        gameDisplay.restart();
         resetBoardState();
-        setGame.inGameDisplay();
+        gameDisplay.inGame();
     
         // Attach event listeners for players
         spots.forEach(spot => spot.addEventListener('click', play));
@@ -212,7 +217,7 @@ const gameBoard = (() => {
             const nextMove = finalBoard(event);
 
             // Next move
-            nextMove === 'next' ? switchTurn() : setGame.endDisplay(nextMove);
+            nextMove === 'next' ? switchTurn() : gameDisplay.end(nextMove);
         }
     }
 
@@ -284,5 +289,4 @@ const gameBoard = (() => {
 
         return 'next';
     }
-
 })();
