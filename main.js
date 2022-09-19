@@ -172,8 +172,6 @@ const ticTacToe = (() => {
             getDOMElements.changeNameBtns.forEach(button => button.disabled = false);
             getDOMElements.btnStart.disabled = false;
 
-            getDOMElements.playerOneName.classList.remove('in-play');
-            getDOMElements.playerTwoName.classList.remove('in-play');
         }
     
         // Disable footer buttons 
@@ -215,6 +213,11 @@ const ticTacToe = (() => {
                 getDOMElements.playerOneName.classList.remove('in-play');
                 getDOMElements.playerTwoName.classList.add('in-play');
             }
+        }
+
+        const resetRenderPlayerTurn = () => {
+            getDOMElements.playerOneName.classList.remove('in-play');
+            getDOMElements.playerTwoName.classList.remove('in-play');
         }
     
         const restartGame = () => {
@@ -271,6 +274,7 @@ const ticTacToe = (() => {
         }
     
         const endGame = (result) => {
+            resetRenderPlayerTurn();
             toggleBoard();
             winningMessage(result);
         } 
