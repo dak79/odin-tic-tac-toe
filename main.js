@@ -2,6 +2,7 @@ const ticTacToe = (() => {
 
     const player = (name, symbol, isPlaying) => {
         let winner = false;
+        let controller = 'human';
         const getName = () => name;
         const setName = value => name = value;
         const getSymbol = () => symbol;
@@ -9,6 +10,8 @@ const ticTacToe = (() => {
         const setIsPlaying = value => isPlaying = value;
         const getWinner = () => winner;
         const setWinner = value => winner = value;
+        const getController = () => controller;
+        const setController = value => controller = value;
     
         return {
             getName,
@@ -17,7 +20,9 @@ const ticTacToe = (() => {
             getIsPlaying,
             setIsPlaying,
             getWinner,
-            setWinner
+            setWinner,
+            getController,
+            setController
         };
     } 
     
@@ -31,6 +36,7 @@ const ticTacToe = (() => {
         const infoText = document.querySelector('#info-text');
         const title = document.querySelector('#title');
         const spots = document.querySelectorAll('.spot');
+        const playerController = document.querySelectorAll('.radio-controller');
         
         return {
             playFirst,
@@ -40,7 +46,8 @@ const ticTacToe = (() => {
             sectionGameBoard,
             infoText,
             title,
-            spots
+            spots,
+            playerController
         }
         
     })();
@@ -54,6 +61,8 @@ const ticTacToe = (() => {
         // Listeners
         getDOMElements.changeNameBtns.forEach(button => button.addEventListener('click', changePlayerName));
         getDOMElements.playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
+        getDOMElements.playerController.forEach(button => button.addEventListener('change', setControllers));
+
         
         function changePlayerName (event) {
             
@@ -112,6 +121,13 @@ const ticTacToe = (() => {
                 playerOne.setIsPlaying(false);
                 playerTwo.setIsPlaying(true);
             }
+        }
+
+        function setControllers(event) {
+            
+            const controller = event.target.value;
+            
+            controller === 'controller-player-one-human' ? playerOne.setController('human') : controller === 'controller-player-one-bot' ? playerOne.setController('bot') : controller === 'controller-player-two-human' ? playerTwo.setController('human') : playerTwo.setController('bot');
         }
     
         // Reset player prop
@@ -181,14 +197,13 @@ const ticTacToe = (() => {
             toggleInfoText();
         }
 
-    
         const inGame = () => {
             toggleInfoText();
             setGame.disableFooterBtn();
         }
 
         const winningMessage = (result) => {
-            
+
             // Create result display
             const wrapper = document.createElement('div');
             const winningText = document.createElement('p');
