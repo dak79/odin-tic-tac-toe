@@ -388,7 +388,7 @@ const ticTacToe = (() => {
             if (setGame.playerOne.getController() === 'human' && setGame.playerOne.getIsPlaying() || setGame.playerTwo.getController() === 'human' && setGame.playerTwo.getIsPlaying()) {
                 getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.playHuman));
             } else {
-                gameBoard.playBot();
+                setTimeout(gameBoard.playBot, 1000);   
             }
         }
     
