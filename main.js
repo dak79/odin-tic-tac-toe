@@ -16,6 +16,7 @@ const ticTacToe = (() => {
         const setWinner = value => winner = value;
     
         return {
+            controller,
             getName,
             getSymbol,
             getIsPlaying,
@@ -137,17 +138,18 @@ const ticTacToe = (() => {
             
             const controller = event.target.value;
             
-            controller === 'controller-player-one-human' ? playerOne.setController('human') : controller === 'controller-player-one-bot' ? playerOne.setController('bot') : controller === 'controller-player-two-human' ? playerTwo.setController('human') : playerTwo.setController('bot');
+            return controller === 'controller-player-one-human' ? playerOne.setController('human') : controller === 'controller-player-one-bot' ? playerOne.setController('bot') : controller === 'controller-player-two-human' ? playerTwo.setController('human') : playerTwo.setController('bot');
         }
     
         // Reset player prop
         const resetPlayer = () => {
-            playerOne.setWinner(false);
-            playerTwo.setWinner(false);
             playerOne.setIsPlaying(true);
-            playerTwo.setIsPlaying(false);
             playerOne.setController('human');
+            playerOne.setWinner(false);
+            
+            playerTwo.setIsPlaying(false);
             playerTwo.setController('human');
+            playerTwo.setWinner(false);
         }
     
         // Reset footer buttons
@@ -406,14 +408,14 @@ const ticTacToe = (() => {
     })();
     
     const game = (() => {
-    
+
         // Listener
         getDOMElements.btnStart.addEventListener('click', start);
         
         function start() {
             gameDisplay.toggleBoard();
             gameDisplay.inGame();
-        
+
             // Player or Bot first play
             if (setGame.playerOne.getController() === 'human' && setGame.playerOne.getIsPlaying() || setGame.playerTwo.getController() === 'human' && setGame.playerTwo.getIsPlaying()) {
                 getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.playHuman));
@@ -434,6 +436,7 @@ const ticTacToe = (() => {
         }
 
         function inPlay() {
+        
             if (setGame.playerOne.getIsPlaying()) {
                 
                 if (setGame.playerOne.getController() === 'human') {
