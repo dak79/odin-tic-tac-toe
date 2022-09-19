@@ -87,8 +87,12 @@ main {
     height: 80vh;
 } 
 
-main header {
+main #title {
     grid-area: header;
+}
+
+p#info-text {
+    grid-area: game;
 }
 
 /* b. Board */
@@ -315,14 +319,16 @@ main {
     box-shadow: var(--standard-shadow);
 }
 
+p#info-text {
+    color: var(--zinc-800);
+    font-weight: 700;
+    font-size: 3rem; 
+}
+
 /* b. Header and Player Name Text */
 h1,
 .player-name-text {
     color: var(--zinc-800);
-}
-
-header p {
-    color: var(--zinc-700);
 }
 
 /* c. End Game State */

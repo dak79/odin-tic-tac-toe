@@ -29,7 +29,7 @@ const ticTacToe = (() => {
         const main = document.querySelector('#display');
         const sectionGameBoard = document.querySelector('#gameBoard');
         const infoText = document.querySelector('#info-text');
-        const header = document.querySelector('header');
+        const title = document.querySelector('#title');
         const spots = document.querySelectorAll('.spot');
         
         return {
@@ -39,7 +39,7 @@ const ticTacToe = (() => {
             main,
             sectionGameBoard,
             infoText,
-            header,
+            title,
             spots
         }
         
@@ -156,10 +156,14 @@ const ticTacToe = (() => {
     })();
     
     const gameDisplay = (() => {
-        
+
         const toggleBoard = () => {
             getDOMElements.sectionGameBoard.classList.toggle('board');
             getDOMElements.sectionGameBoard.classList.toggle('invisible');
+        }
+
+        const toggleInfoText = () => {
+            getDOMElements.infoText.classList.toggle('invisible');
         }
     
         const restart = () => {
@@ -173,20 +177,18 @@ const ticTacToe = (() => {
             if (winningDisplay) {
                 winningDisplay.remove(); 
             }
-    
             
-    
-            // Display info text
-            getDOMElements.infoText.classList.remove('invisible');
+            toggleInfoText();
         }
 
     
         const inGame = () => {
-            getDOMElements.infoText.classList.add('invisible');
+            toggleInfoText();
             setGame.disableFooterBtn();
         }
 
         const winningMessage = (result) => {
+            
             // Create result display
             const wrapper = document.createElement('div');
             const winningText = document.createElement('p');
@@ -212,7 +214,7 @@ const ticTacToe = (() => {
             }
 
             // Append result display on DOM
-            getDOMElements.header.after(wrapper);
+            getDOMElements.title.after(wrapper);
             wrapper.appendChild(winningText);
             wrapper.appendChild(newGameInfo);
         }
