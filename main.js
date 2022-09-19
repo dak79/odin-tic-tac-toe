@@ -20,35 +20,50 @@ const ticTacToe = (() => {
             setWinner
         };
     } 
-
-   
     
-    const setGame = (()=> {
-    
-        // Create standard instances
-        const playerOne = player('Player 1', 'X', true);
-        const playerTwo = player('Player 2', '0', false);
-    
-        // Get DOM Elements
+    const getDOMElements = (() => {
         const playFirst = document.querySelectorAll('input[name=radio-play-first]');
         const changeNameBtns = document.querySelectorAll('.btn-change');
         const btnStart = document.querySelector('#btn-start');
+        const main = document.querySelector('#display');
+        const sectionGameBoard = document.querySelector('#gameBoard');
+        const infoText = document.querySelector('#info-text');
+        const header = document.querySelector('header');
+        const spots = document.querySelectorAll('.spot');
+        
+        return {
+            playFirst,
+            changeNameBtns,
+            btnStart,
+            main,
+            sectionGameBoard,
+            infoText,
+            header,
+            spots
+        }
+        
+    })();
+    
+    const setGame = (()=> {
+        
+        // Create standard instances
+        const playerOne = player('Player 1', 'X', true);
+        const playerTwo = player('Player 2', '0', false);
         
         // Listeners
-        changeNameBtns.forEach(button => button.addEventListener('click', changePlayerName));
-        playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
+        getDOMElements.changeNameBtns.forEach(button => button.addEventListener('click', changePlayerName));
+        getDOMElements.playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
         
         function changePlayerName (event) {
             
             // Create card for entering new name
-            const main = document.querySelector('#display');
             const background = document.createElement('div');
             const card = document.createElement('div');
             const newNameLabel = document.createElement('label');
             const newName = document.createElement('input');
             const btnSave = document.createElement('button');
             const btnChange = event.target.dataset.btn;
-    
+            
             background.classList.add('layer');
             
             card.classList.add('card');
@@ -56,19 +71,22 @@ const ticTacToe = (() => {
             newNameLabel.setAttribute('for', 'newName');
             newNameLabel.textContent = 'New Name';
             newNameLabel.classList.add('card-label');
-    
+            
             newName.setAttribute('type', 'text');
             newName.setAttribute('id', 'newName');
             newName.setAttribute('name', 'newName');
             newName.classList.add('card-input');
-    
+            
             btnSave.setAttribute('type', 'button');
             btnSave.textContent = 'Save';
             btnSave.classList.add('btn', 'btn-card');
             btnSave.addEventListener('click', setPlayerName);
-    
+            
             function setPlayerName () {
+                
+                // Get the button which fire the event
                 const playerName = document.querySelector(`#${btnChange}`);
+                
                 playerName.textContent = newName.value;
                 btnChange === 'player-one-name' ? playerOne.setName(newName.value) : playerTwo.setName(newName.value);
                 
@@ -76,15 +94,15 @@ const ticTacToe = (() => {
                 btnSave.removeEventListener('click', setPlayerName);
                 background.remove();
             }
-    
+            
             // Append card on DOM
-            main.insertBefore(background, main.firstChild);
+            getDOMElements.main.insertBefore(background, getDOMElements.main.firstChild);
             background.appendChild(card);
             card.appendChild(newNameLabel);
             card.appendChild(newName);
             card.appendChild(btnSave);
         }
-    
+        
         function setPlayFirst(event) {
             if (event.target.value === 'player-one-play-first') {
                 playerOne.setIsPlaying(true);
@@ -105,7 +123,7 @@ const ticTacToe = (() => {
     
         // Reset footer buttons
         const resetFooterBtn = () => {
-            playFirst.forEach((button, index) => {
+            getDOMElements.playFirst.forEach((button, index) => {
                 button.disabled = false
         
                 if (!button.checked && index === 0) {
@@ -116,15 +134,15 @@ const ticTacToe = (() => {
                 }
             });
             
-            changeNameBtns.forEach(button => button.disabled = false);
-            btnStart.disabled = false;
+            getDOMElements.changeNameBtns.forEach(button => button.disabled = false);
+            getDOMElements.btnStart.disabled = false;
         }
     
         // Disable footer buttons 
         const disableFooterBtn = () => {
-            playFirst.forEach(button => button.disabled = true);
-            changeNameBtns.forEach(button => button.disabled = true);
-            btnStart.disabled = true;
+            getDOMElements.playFirst.forEach(button => button.disabled = true);
+            getDOMElements.changeNameBtns.forEach(button => button.disabled = true);
+            getDOMElements.btnStart.disabled = true;
         }
     
         return {
@@ -132,20 +150,15 @@ const ticTacToe = (() => {
             playerTwo,
             resetPlayer,
             resetFooterBtn,
-            disableFooterBtn,
-            btnStart
+            disableFooterBtn
         };
     })();
     
     const gameDisplay = (() => {
     
-        // Get DOM element
-        const sectionGameBoard = document.querySelector('#gameBoard');
-        const infoText = document.querySelector('#info-text');
-    
         const restart = () => {
     
-            // Get DOM elements
+            // Get the winning message
             const winningDisplay = document.querySelector('.winning-msg');
     
             setGame.resetFooterBtn();
@@ -155,30 +168,29 @@ const ticTacToe = (() => {
                 winningDisplay.remove(); 
             }
     
-            if (sectionGameBoard.className === 'invisible') {
-                sectionGameBoard.classList.add('board');
-                sectionGameBoard.classList.remove('invisible');
+            if (getDOMElements.sectionGameBoard.className === 'invisible') {
+                getDOMElements.sectionGameBoard.classList.add('board');
+                getDOMElements.sectionGameBoard.classList.remove('invisible');
             }
     
             // Display info text
-            infoText.classList.remove('invisible');
+            getDOMElements.infoText.classList.remove('invisible');
         }
     
         const inGame = () => {
-            infoText.classList.add('invisible');
+            getDOMElements.infoText.classList.add('invisible');
             setGame.disableFooterBtn();
         }
     
         const end = (result) => {
     
             // Create result display
-            const header = document.querySelector('header');
             const wrapper = document.createElement('div');
             const winningText = document.createElement('p');
             const newGameInfo = document.createElement('p');
             
-            sectionGameBoard.classList.add('invisible');
-            sectionGameBoard.classList.remove('board');
+            getDOMElements.sectionGameBoard.classList.add('invisible');
+            getDOMElements.sectionGameBoard.classList.remove('board');
             
             wrapper.classList.add('winning-msg');
             
@@ -201,7 +213,7 @@ const ticTacToe = (() => {
             }
     
             // Append result display on DOM
-            header.after(wrapper);
+            getDOMElements.header.after(wrapper);
             wrapper.appendChild(winningText);
             wrapper.appendChild(newGameInfo);
         } 
@@ -221,7 +233,6 @@ const ticTacToe = (() => {
         ];
     
         // Get DOM elements
-        const spots = document.querySelectorAll('.spot');
             
         function play(event) {
             if (!event.target.textContent) {
@@ -243,7 +254,7 @@ const ticTacToe = (() => {
         const updateBoardState = (update, symbol) => boardState.splice(update, 1, symbol);
         
         // Render boardState array
-        const render = () => spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
+        const render = () => getDOMElements.spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
         
         // Store player moves in arrays
         const playerOneMoves = [];
@@ -290,11 +301,10 @@ const ticTacToe = (() => {
             playerTwoMoves.splice(0, playerTwoMoves.length);
            
             // Remove Listener
-            spots.forEach(spot => spot.removeEventListener('click', gameBoard.play));
+            getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.play));
         }
     
         return {
-            spots,
             play,
             render,
             resetBoardState
@@ -304,13 +314,13 @@ const ticTacToe = (() => {
     const game = (() => {
     
         // Listener
-        setGame.btnStart.addEventListener('click', start);
+        getDOMElements.btnStart.addEventListener('click', start);
         
         function start() {
             gameDisplay.inGame();
         
             // Attach event listeners for players
-            gameBoard.spots.forEach(spot => spot.addEventListener('click', gameBoard.play));
+            getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play));
         }
     
         function switchTurn () {
