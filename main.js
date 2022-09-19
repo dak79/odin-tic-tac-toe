@@ -2,26 +2,18 @@ const ticTacToe = (() => {
 
     const player = (name, symbol, isPlaying) => {
         let winner = false;
-        let controller = 'human';
-        
-        const getName = () => name;
-        const getSymbol = () => symbol;
-        const getIsPlaying = () => isPlaying;
-        const getController = () => controller;
-        const getWinner = () => winner;
-        
+        let controller = 'human'; 
         const setName = value => name = value;
         const setIsPlaying = value => isPlaying = value;
         const setController = value => controller = value;
         const setWinner = value => winner = value;
     
         return {
+            name,
+            symbol,
+            isPlaying,
             controller,
-            getName,
-            getSymbol,
-            getIsPlaying,
-            getController,
-            getWinner,
+            winner,
             setName,
             setIsPlaying,
             setController,
@@ -66,12 +58,11 @@ const ticTacToe = (() => {
         const playerOne = player('Player 1', 'X', true);
         const playerTwo = player('Player 2', '0', false);
         
-        // Listeners
+        // Event Listeners Footer
         getDOMElements.playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
         getDOMElements.changeNameBtns.forEach(button => button.addEventListener('click', changePlayerName));
         getDOMElements.playerController.forEach(button => button.addEventListener('change', setControllers));
 
-        
         function changePlayerName (event) {
             
             // Create card for entering new name
@@ -81,6 +72,7 @@ const ticTacToe = (() => {
             const newName = document.createElement('input');
             const btnSave = document.createElement('button');
             const btnChange = event.target.dataset.btn;
+            const btnChangeName = String(event.target.dataset.name);
             
             background.classList.add('layer');
             
@@ -100,59 +92,72 @@ const ticTacToe = (() => {
             btnSave.classList.add('btn', 'btn-card');
             btnSave.addEventListener('click', setPlayerName);
             
-            function setPlayerName () {
-                
-                // Get the button which fire the event
-                const playerName = document.querySelector(`#${btnChange}`);
-                
-                playerName.textContent = newName.value;
-                btnChange === 'player-one-name' ? playerOne.setName(newName.value) : playerTwo.setName(newName.value);
-                
-                // Remove card
-                btnSave.removeEventListener('click', setPlayerName);
-                background.remove();
-            }
-            
             // Append card on DOM
             getDOMElements.main.insertBefore(background, getDOMElements.main.firstChild);
             background.appendChild(card);
             card.appendChild(newNameLabel);
             card.appendChild(newName);
             card.appendChild(btnSave);
+            
+            function setPlayerName () {
+                
+                // Get the button which fire the event
+                const playerName = document.querySelector(`#${btnChange}`);
+                
+                if (!newName.value) {
+                    playerName.textContent = btnChangeName;
+                } else {
+                    if (btnChange === 'player-one-name') {
+                        playerName.textContent = newName.value;
+                        playerOne.name = playerOne.setName(newName.value);
+                    } else {
+                        playerName.textContent = newName.value;
+                        playerTwo.name = playerTwo.setName(newName.value);
+                    }
+                }
+
+                // Remove card
+                btnSave.removeEventListener('click', setPlayerName);
+                background.remove();
+            }
         }
         
         function setPlayFirst(event) {
-
             const startPlaying = event.target.value;
 
             if (startPlaying === 'player-one-play-first') {
-                playerOne.setIsPlaying(true);
-                playerTwo.setIsPlaying(false);
+                playerOne.isPlaying = playerOne.setIsPlaying(true);
+                playerTwo.isPlaying = playerTwo.setIsPlaying(false);
             } else {
-                playerOne.setIsPlaying(false);
-                playerTwo.setIsPlaying(true);
+                playerOne.isPlaying = playerOne.setIsPlaying(false);
+                playerTwo.isPlaying = playerTwo.setIsPlaying(true);
             }
         }
 
         function setControllers(event) {
-            
             const controller = event.target.value;
-            
-            return controller === 'controller-player-one-human' ? playerOne.setController('human') : controller === 'controller-player-one-bot' ? playerOne.setController('bot') : controller === 'controller-player-two-human' ? playerTwo.setController('human') : playerTwo.setController('bot');
+
+            if (controller === 'controller-player-one-human') {
+                playerOne.controller = playerOne.setController('human');
+            } else if (controller === 'controller-player-one-bot') {
+                playerOne.controller = playerOne.setController('bot');
+            } else if (controller === 'controller-player-two-human') {
+                playerTwo.controller = playerTwo.setController('human');
+            } else {
+                playerTwo.controller = playerTwo.setController('bot');
+            }
         }
     
-        // Reset player prop
         const resetPlayer = () => {
-            playerOne.setIsPlaying(true);
-            playerOne.setController('human');
-            playerOne.setWinner(false);
-            
-            playerTwo.setIsPlaying(false);
-            playerTwo.setController('human');
-            playerTwo.setWinner(false);
+            playerOne.isPlaying = playerOne.setIsPlaying(true);
+            playerOne.controller = playerOne.setController('human');
+            playerOne.winner = playerOne.setWinner(false);
+
+            playerTwo.isPlaying = playerTwo.setIsPlaying(false);
+            playerTwo.controller = playerTwo.setController('human');
+            playerTwo.winner = playerTwo.setWinner(false);
         }
     
-        // Reset footer buttons
         const resetFooterBtn = () => {
             getDOMElements.playFirst.forEach((button, index) => {
                 button.disabled = false
@@ -176,7 +181,6 @@ const ticTacToe = (() => {
 
         }
     
-        // Disable footer buttons 
         const disableFooterBtn = () => {
             getDOMElements.playFirst.forEach(button => button.disabled = true);
             getDOMElements.changeNameBtns.forEach(button => button.disabled = true);
@@ -204,11 +208,8 @@ const ticTacToe = (() => {
             getDOMElements.infoText.classList.toggle('invisible');
         }
 
-
         const renderPlayerTurn = () => {
-            const playerOneTurn = setGame.playerOne.getIsPlaying();
-
-            if (playerOneTurn) {
+            if (setGame.playerOne.isPlaying) {
                 getDOMElements.playerOneName.classList.add('in-play');
                 getDOMElements.playerTwoName.classList.remove('in-play');
             } else {
@@ -229,7 +230,6 @@ const ticTacToe = (() => {
     
             setGame.resetFooterBtn();
     
-            // Reset winning display
             if (winningDisplay) {
                 winningDisplay.remove(); 
             }
@@ -252,7 +252,7 @@ const ticTacToe = (() => {
 
             wrapper.classList.add('winning-msg');
             if (result === 'win') {
-                winningText.textContent = `${setGame.playerOne.getWinner() ? setGame.playerOne.getName() : setGame.playerTwo.getName()} wins the match`;
+                winningText.textContent = `${setGame.playerOne.winner ? setGame.playerOne.name : setGame.playerTwo.name} wins the match`;
                 winningText.classList.add('winning-text');
             } else {
                 winningText.textContent = `It's a tie`;
@@ -264,15 +264,15 @@ const ticTacToe = (() => {
     
             wrapper.addEventListener('click', playAgain); 
             
-            function playAgain() {
-                wrapper.removeEventListener('click', playAgain);
-                restartGame();
-            }
-
             // Append result display on DOM
             getDOMElements.title.after(wrapper);
             wrapper.appendChild(winningText);
             wrapper.appendChild(newGameInfo);
+            
+            function playAgain() {
+                wrapper.removeEventListener('click', playAgain);
+                restartGame();
+            }
         }
     
         const endGame = (result) => {
@@ -296,38 +296,32 @@ const ticTacToe = (() => {
             null, null, null
         ];
     
-        function playHuman(event) {
-            if (!event.target.textContent) {
-                
-                // Update board state
-                setGame.playerOne.getIsPlaying() ? updateBoardState(event.target.dataset.index, setGame.playerOne.getSymbol()) : updateBoardState(event.target.dataset.index, setGame.playerTwo.getSymbol());
-                
-                // Render board state
-                renderBoardState();
+        function play(event) {
+            
+            if (setGame.playerOne.controller === 'human' && setGame.playerOne.isPlaying || setGame.playerTwo.controller === 'human' && setGame.playerTwo.isPlaying) {
+                if (!event.target.textContent) {
+                    
+                    // Update boardState human
+                    setGame.playerOne.isPlaying ? updateBoardState(event.target.dataset.index, setGame.playerOne.symbol) : updateBoardState(event.target.dataset.index, setGame.playerTwo.symbol);
+                }
+            
+            } else {
+                let index;
+            
+                // Check for a free spot to play
+                do {
+                    index = Math.round(Math.random() * 9)
+                } while (boardState[index] !== null)
 
-                // Check for next step
-                game.checkNextStep();
+                // Update boardState bot
+                setGame.playerOne.isPlaying ? updateBoardState(index, setGame.playerOne.symbol) : updateBoardState(index, setGame.playerTwo.symbol);
             }
-        }
-
-        const playBot = () => {
-            let index;
-            
-            // Check for a free spot to play
-            do {
-                index = Math.round(Math.random() * 9)
-            } while (boardState[index] !== null)
-
-            // Update boardState with bot plays
-            setGame.playerOne.getIsPlaying() ? updateBoardState(index, setGame.playerOne.getSymbol()) : updateBoardState(index, setGame.playerTwo.getSymbol());
-            
-            // Render new board state
+                
             renderBoardState();
-            
-            // Check for next step
-            game.checkNextStep();  
+
+            game.nextMove();            
         }
-          
+
         // Update boardState array
         const updateBoardState = (update, symbol) => boardState.splice(update, 1, symbol);
         
@@ -342,30 +336,31 @@ const ticTacToe = (() => {
         let playerTwoMoves = [];
         
         const finalBoard = () => {
-        
-        // Reset player moves
         playerOneMoves = [];
         playerTwoMoves = [];
     
-            const whoPlays = setGame.playerOne.getIsPlaying();
-            const symbol = setGame.playerOne.getIsPlaying() ? setGame.playerOne.getSymbol() : setGame.playerTwo.getSymbol();
+            const symbol = setGame.playerOne.isPlaying ? setGame.playerOne.symbol : setGame.playerTwo.symbol;
             
-            // Fill player moves array
+            // Fill playerMoves array
             let index = boardState.indexOf(symbol);
             while (index !== -1) {
-                whoPlays ? playerOneMoves.push(index) : playerTwoMoves.push(index);
+                setGame.playerOne.isPlaying ? playerOneMoves.push(index) : playerTwoMoves.push(index);
                 index = boardState.indexOf(symbol, index + 1);
             }
-            
-             // Search for an end board
+
             const searchWinnerOrTie = () => {
 
                 // Search for a winner
                 for (let i = 0; i < 8; i++) { 
-                    const winnerExist = winningPatterns[i].every(winningPattern => whoPlays ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern));
+                    const winnerExist = winningPatterns[i].every(winningPattern => setGame.playerOne.isPlaying ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern));
                     
                     if (winnerExist) {
-                        whoPlays ? setGame.playerOne.setWinner(true) : setGame.playerTwo.setWinner(true);
+                        if (setGame.playerOne.isPlaying) {
+                            setGame.playerOne.winner = setGame.playerOne.setWinner(true);
+                        } else {
+                            setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);
+                        }
+
                         return 'win';
                     }
                 }
@@ -383,7 +378,6 @@ const ticTacToe = (() => {
             return winOrTie ? winOrTie : 'next';
         }
     
-        // Reset state
         const resetBoardState = () => {
             boardState.forEach((spot, index) => {
                 spot = null;
@@ -396,12 +390,11 @@ const ticTacToe = (() => {
             renderBoardState();
            
             // Remove Listener
-            getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.playHuman));
+            getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.play));
         }
     
         return {
-            playHuman,
-            playBot,
+            play,
             finalBoard,
             resetBoardState
         };
@@ -409,7 +402,7 @@ const ticTacToe = (() => {
     
     const game = (() => {
 
-        // Listener
+        // Add Listener Start Button
         getDOMElements.btnStart.addEventListener('click', start);
         
         function start() {
@@ -417,65 +410,43 @@ const ticTacToe = (() => {
             gameDisplay.inGame();
 
             // Player or Bot first play
-            if (setGame.playerOne.getController() === 'human' && setGame.playerOne.getIsPlaying() || setGame.playerTwo.getController() === 'human' && setGame.playerTwo.getIsPlaying()) {
-                getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.playHuman));
+            if (setGame.playerOne.controller === 'human' && setGame.playerOne.isPlaying || setGame.playerTwo.controller === 'human' && setGame.playerTwo.isPlaying) {
+                getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play));
             } else {
-                setTimeout(gameBoard.playBot, 1000);   
+                setTimeout(gameBoard.play, 1000);   
             }
         }
     
         function switchTurn () {
-            if (setGame.playerOne.getIsPlaying()) {
-                setGame.playerOne.setIsPlaying(false);
-                setGame.playerTwo.setIsPlaying(true);
+            if (setGame.playerOne.isPlaying) {
+                setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(false);
+                setGame.playerTwo.isPlaying = setGame.playerTwo.setIsPlaying(true);
             } else {
-                setGame.playerOne.setIsPlaying(true);
-                setGame.playerTwo.setIsPlaying(false);
-            }
+                setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(true);
+                setGame.playerTwo.isPlaying = setGame.playerTwo.setIsPlaying(false);
+            }            
             gameDisplay.renderPlayerTurn();
         }
 
         function inPlay() {
-        
-            if (setGame.playerOne.getIsPlaying()) {
-                
-                if (setGame.playerOne.getController() === 'human') {
-                    
-                    // Player One Human
-                    getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.playHuman));
-                } else {
-                    
-                    // Player One Bot
-                    getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.playHuman));
-                    gameBoard.playBot();
-                }
+
+            if (setGame.playerOne.controller === 'human' && setGame.playerOne.isPlaying || setGame.playerTwo.controller === 'human' && setGame.playerTwo.isPlaying) {
+                getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play));
             } else {
-
-                if (setGame.playerTwo.getController() === 'human') {
-                    
-                    // Player Two Human
-                    getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.playHuman));
-                } else {
-
-                    // Player Two Bot
-                    getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.playHuman));
-                    gameBoard.playBot();
-                }
+                getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.play));
+                gameBoard.play();
             }
         }
 
-        const checkNextStep = () => {    
-            const final = gameBoard.finalBoard();
-            nextMove(final);
-        }
+        function nextMove() {
+            const finalTurnStatus = gameBoard.finalBoard();
 
-        function nextMove(nextMove) {
-            if (nextMove === 'next') {
+            if (finalTurnStatus === 'next') {
                 switchTurn();
                 setTimeout(inPlay, 1000);
             
             } else {
-                end(nextMove);
+                end(finalTurnStatus);
             }
         }
     
@@ -486,7 +457,7 @@ const ticTacToe = (() => {
         }
     
         return {
-            checkNextStep
+            nextMove
         };
     })();
 })();
