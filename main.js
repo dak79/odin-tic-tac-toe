@@ -22,6 +22,7 @@ const ticTacToe = (() => {
     } 
     
     const getDOMElements = (() => {
+
         const playFirst = document.querySelectorAll('input[name=radio-play-first]');
         const changeNameBtns = document.querySelectorAll('.btn-change');
         const btnStart = document.querySelector('#btn-start');
@@ -155,6 +156,11 @@ const ticTacToe = (() => {
     })();
     
     const gameDisplay = (() => {
+        
+        const toggleBoard = () => {
+            getDOMElements.sectionGameBoard.classList.toggle('board');
+            getDOMElements.sectionGameBoard.classList.toggle('invisible');
+        }
     
         const restart = () => {
     
@@ -168,32 +174,25 @@ const ticTacToe = (() => {
                 winningDisplay.remove(); 
             }
     
-            if (getDOMElements.sectionGameBoard.className === 'invisible') {
-                getDOMElements.sectionGameBoard.classList.add('board');
-                getDOMElements.sectionGameBoard.classList.remove('invisible');
-            }
+            
     
             // Display info text
             getDOMElements.infoText.classList.remove('invisible');
         }
+
     
         const inGame = () => {
             getDOMElements.infoText.classList.add('invisible');
             setGame.disableFooterBtn();
         }
-    
-        const end = (result) => {
-    
+
+        const winningMessage = (result) => {
             // Create result display
             const wrapper = document.createElement('div');
             const winningText = document.createElement('p');
             const newGameInfo = document.createElement('p');
-            
-            getDOMElements.sectionGameBoard.classList.add('invisible');
-            getDOMElements.sectionGameBoard.classList.remove('board');
-            
+
             wrapper.classList.add('winning-msg');
-            
             if (result === 'win') {
                 winningText.textContent = `${setGame.playerOne.getWinner() ? setGame.playerOne.getName() : setGame.playerTwo.getName()} wins the match`;
                 winningText.classList.add('winning-text');
@@ -211,14 +210,20 @@ const ticTacToe = (() => {
                 wrapper.removeEventListener('click', playAgain);
                 restart();
             }
-    
+
             // Append result display on DOM
             getDOMElements.header.after(wrapper);
             wrapper.appendChild(winningText);
             wrapper.appendChild(newGameInfo);
+        }
+    
+        const end = (result) => {
+            toggleBoard();
+            winningMessage(result);
         } 
     
         return {
+            toggleBoard,
             restart,
             inGame,
             end
@@ -232,8 +237,6 @@ const ticTacToe = (() => {
             null, null, null
         ];
     
-        // Get DOM elements
-            
         function play(event) {
             if (!event.target.textContent) {
                 
@@ -317,6 +320,7 @@ const ticTacToe = (() => {
         getDOMElements.btnStart.addEventListener('click', start);
         
         function start() {
+            gameDisplay.toggleBoard();
             gameDisplay.inGame();
         
             // Attach event listeners for players
