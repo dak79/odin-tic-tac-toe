@@ -377,6 +377,10 @@ footer {
     font-size: 1.5rem;
 }
 
+.in-play {
+    color: var(--emerald-700);
+}
+
 /* f. Buttons */
 .btn {
     background-color: var(--zinc-500);

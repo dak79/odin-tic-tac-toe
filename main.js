@@ -35,6 +35,8 @@ const ticTacToe = (() => {
         const infoText = document.querySelector('#info-text');
         const title = document.querySelector('#title');
         const spots = document.querySelectorAll('.spot');
+        const playerOneName = document.querySelector('#player-one-name');
+        const playerTwoName = document.querySelector('#player-two-name');
         
         const playFirst = document.querySelectorAll('input[name=radio-play-first]');
         const changeNameBtns = document.querySelectorAll('.btn-change');
@@ -47,6 +49,8 @@ const ticTacToe = (() => {
             infoText,
             title,
             spots,
+            playerOneName,
+            playerTwoName,
             playFirst,
             changeNameBtns,
             playerController,
@@ -167,6 +171,9 @@ const ticTacToe = (() => {
             
             getDOMElements.changeNameBtns.forEach(button => button.disabled = false);
             getDOMElements.btnStart.disabled = false;
+
+            getDOMElements.playerOneName.classList.remove('in-play');
+            getDOMElements.playerTwoName.classList.remove('in-play');
         }
     
         // Disable footer buttons 
@@ -196,6 +203,19 @@ const ticTacToe = (() => {
         const toggleInfoText = () => {
             getDOMElements.infoText.classList.toggle('invisible');
         }
+
+
+        const renderPlayerTurn = () => {
+            const playerOneTurn = setGame.playerOne.getIsPlaying();
+
+            if (playerOneTurn) {
+                getDOMElements.playerOneName.classList.add('in-play');
+                getDOMElements.playerTwoName.classList.remove('in-play');
+            } else {
+                getDOMElements.playerOneName.classList.remove('in-play');
+                getDOMElements.playerTwoName.classList.add('in-play');
+            }
+        }
     
         const restartGame = () => {
     
@@ -214,6 +234,7 @@ const ticTacToe = (() => {
 
         const inGame = () => {
             toggleInfoText();
+            renderPlayerTurn();
             setGame.disableFooterBtn();
         }
 
@@ -255,6 +276,7 @@ const ticTacToe = (() => {
         } 
     
         return {
+            renderPlayerTurn,
             toggleBoard,
             inGame,
             endGame
@@ -400,6 +422,7 @@ const ticTacToe = (() => {
                 setGame.playerOne.setIsPlaying(true);
                 setGame.playerTwo.setIsPlaying(false);
             }
+            gameDisplay.renderPlayerTurn();
         }
 
         function inPlay() {
