@@ -136,6 +136,8 @@ const ticTacToe = (() => {
             playerTwo.setWinner(false);
             playerOne.setIsPlaying(true);
             playerTwo.setIsPlaying(false);
+            playerOne.setController('human');
+            playerTwo.setController('human');
         }
     
         // Reset footer buttons
@@ -143,12 +145,18 @@ const ticTacToe = (() => {
             getDOMElements.playFirst.forEach((button, index) => {
                 button.disabled = false
         
-                if (!button.checked && index === 0) {
-                    button.checked = true;
-                }
-                if (button.checked && index === 1 ) {
-                    button.checked = false;
-                }
+                if (!button.checked && index === 0) button.checked = true;
+
+                if (button.checked && index === 1) button.checked = false;
+            });
+
+            getDOMElements.playerController.forEach((button, index) => {
+                button.disabled = false;
+
+                if (!button.checked && index === 0 || !button.checked && index === 2) button.checked = true;
+
+                if (button.checked && index === 1 || button.checked && index === 3) button.checked = false;
+
             });
             
             getDOMElements.changeNameBtns.forEach(button => button.disabled = false);
@@ -160,6 +168,7 @@ const ticTacToe = (() => {
             getDOMElements.playFirst.forEach(button => button.disabled = true);
             getDOMElements.changeNameBtns.forEach(button => button.disabled = true);
             getDOMElements.btnStart.disabled = true;
+            getDOMElements.playerController.forEach(button => button.disabled = true);
         }
     
         return {
