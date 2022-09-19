@@ -383,7 +383,11 @@ const ticTacToe = (() => {
     
         // Reset state
         const resetBoardState = () => {
-            boardState.forEach((spot, index) => boardState[index] = null);
+            boardState.forEach((spot, index) => {
+                spot = null;
+                boardState[index] = spot;
+            });
+            
             playerOneMoves.splice(0, playerOneMoves.length);
             playerTwoMoves.splice(0, playerTwoMoves.length);
 
