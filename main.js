@@ -197,7 +197,7 @@ const ticTacToe = (() => {
             getDOMElements.infoText.classList.toggle('invisible');
         }
     
-        const restart = () => {
+        const restartGame = () => {
     
             // Get the winning message
             const winningDisplay = document.querySelector('.winning-msg');
@@ -240,7 +240,7 @@ const ticTacToe = (() => {
             
             function playAgain() {
                 wrapper.removeEventListener('click', playAgain);
-                restart();
+                restartGame();
             }
 
             // Append result display on DOM
@@ -249,16 +249,15 @@ const ticTacToe = (() => {
             wrapper.appendChild(newGameInfo);
         }
     
-        const end = (result) => {
+        const endGame = (result) => {
             toggleBoard();
             winningMessage(result);
         } 
     
         return {
             toggleBoard,
-            restart,
             inGame,
-            end
+            endGame
         };
     })();
     
@@ -276,78 +275,64 @@ const ticTacToe = (() => {
                 setGame.playerOne.getIsPlaying() ? updateBoardState(event.target.dataset.index, setGame.playerOne.getSymbol()) : updateBoardState(event.target.dataset.index, setGame.playerTwo.getSymbol());
                 
                 // Render board state
-                render();
+                renderBoardState();
 
-                const final = finalBoard();
-
-                console.log(final);
-                // Next Move
-                game.nextMove(final);
-
-            
-        
-                // const nextMove = finalBoard(event);
-    
-                // // Next move
-                // nextMove === 'next' ? game.switchTurn() : game.end(nextMove);
+                // Check for next step
+                game.checkNextStep();
             }
         }
 
         const playBot = () => {
             let index;
- 
+            
+            // Check for a free spot to play
             do {
                 index = Math.round(Math.random() * 9)
-                console.log(index)
             } while (boardState[index] !== null)
 
-
+            // Update boardState with bot plays
+            setGame.playerOne.getIsPlaying() ? updateBoardState(index, setGame.playerOne.getSymbol()) : updateBoardState(index, setGame.playerTwo.getSymbol());
             
-                setGame.playerOne.getIsPlaying() ? updateBoardState(index, setGame.playerOne.getSymbol()) : updateBoardState(index, setGame.playerTwo.getSymbol());
+            // Render new board state
+            renderBoardState();
             
-
-            render();
-            console.log(boardState)
-
-            const final = finalBoard();
-
-            game.nextMove(final);
-            
+            // Check for next step
+            game.checkNextStep();  
         }
           
         // Update boardState array
         const updateBoardState = (update, symbol) => boardState.splice(update, 1, symbol);
         
         // Render boardState array
-        const render = () => getDOMElements.spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
+        const renderBoardState = () => getDOMElements.spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
+
+        // Array of winning patterns
+        const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
         
         // Store player moves in arrays
         let playerOneMoves = [];
         let playerTwoMoves = [];
         
-        
-        // Array of winning patterns
-        const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-        
-        // Manage final board
         const finalBoard = () => {
-            // Store player moves in arrays
+        
+        // Reset player moves
         playerOneMoves = [];
         playerTwoMoves = [];
     
             const whoPlays = setGame.playerOne.getIsPlaying();
             const symbol = setGame.playerOne.getIsPlaying() ? setGame.playerOne.getSymbol() : setGame.playerTwo.getSymbol();
-    
+            
+            // Fill player moves array
             let index = boardState.indexOf(symbol);
             while (index !== -1) {
-
                 whoPlays ? playerOneMoves.push(index) : playerTwoMoves.push(index);
-
                 index = boardState.indexOf(symbol, index + 1);
             }
             
-             // Search for a winner
+             // Search for an end board
             const searchWinnerOrTie = () => {
+
+                // Search for a winner
                 for (let i = 0; i < 8; i++) { 
                     const winnerExist = winningPatterns[i].every(winningPattern => whoPlays ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern));
                     
@@ -364,6 +349,7 @@ const ticTacToe = (() => {
                     return 'tie';
                 }
             }
+
             const winOrTie = searchWinnerOrTie();
     
             return winOrTie ? winOrTie : 'next';
@@ -374,6 +360,8 @@ const ticTacToe = (() => {
             boardState.forEach((spot, index) => boardState[index] = null);
             playerOneMoves.splice(0, playerOneMoves.length);
             playerTwoMoves.splice(0, playerTwoMoves.length);
+
+            renderBoardState();
            
             // Remove Listener
             getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.playHuman));
@@ -382,7 +370,6 @@ const ticTacToe = (() => {
         return {
             playHuman,
             playBot,
-            render,
             finalBoard,
             resetBoardState
         };
@@ -397,12 +384,11 @@ const ticTacToe = (() => {
             gameDisplay.toggleBoard();
             gameDisplay.inGame();
         
-            // Attach event listeners for players
+            // Player or Bot first play
             if (setGame.playerOne.getController() === 'human' && setGame.playerOne.getIsPlaying() || setGame.playerTwo.getController() === 'human' && setGame.playerTwo.getIsPlaying()) {
                 getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.playHuman));
             } else {
                 gameBoard.playBot();
-                
             }
         }
     
@@ -417,31 +403,42 @@ const ticTacToe = (() => {
         }
 
         function inPlay() {
-            console.log(setGame.playerOne.getIsPlaying())
             if (setGame.playerOne.getIsPlaying()) {
+                
                 if (setGame.playerOne.getController() === 'human') {
+                    
+                    // Player One Human
                     getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.playHuman));
                 } else {
-                    // Remove Player Listener
+                    
+                    // Player One Bot
                     getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.playHuman));
                     gameBoard.playBot();
                 }
             } else {
+
                 if (setGame.playerTwo.getController() === 'human') {
+                    
+                    // Player Two Human
                     getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.playHuman));
                 } else {
+
+                    // Player Two Bot
                     getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.playHuman));
                     gameBoard.playBot();
                 }
             }
         }
 
-        function nextMove(nextMove) {
-            
+        const checkNextStep = () => {    
+            const final = gameBoard.finalBoard();
+            nextMove(final);
+        }
 
+        function nextMove(nextMove) {
             if (nextMove === 'next') {
                 switchTurn();
-                setTimeout(inPlay, 1000)
+                setTimeout(inPlay, 1000);
             
             } else {
                 end(nextMove);
@@ -449,17 +446,13 @@ const ticTacToe = (() => {
         }
     
         function end (nextState) {
-            gameDisplay.end(nextState);
+            gameDisplay.endGame(nextState);
             gameBoard.resetBoardState();
-            gameBoard.render();
             setGame.resetPlayer();
         }
     
         return {
-            inPlay,
-            nextMove,
-            switchTurn,
-            end
+            checkNextStep
         };
     })();
 })();
