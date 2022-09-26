@@ -291,12 +291,14 @@ const ticTacToe = (() => {
     
     const gameBoard = (() => {
         const boardState = [
-            null, null, null,
-            null, null, null,
-            null, null, null
+            [null, null, null],
+            [null, null, null],
+            [null, null, null]
         ];
     
         function play(event) {
+            
+            let emptyBoard = boardState.every(spot => spot === null);
             
             if (setGame.playerOne.controller === 'human' && setGame.playerOne.isPlaying || setGame.playerTwo.controller === 'human' && setGame.playerTwo.isPlaying) {
                 if (!event.target.textContent) {
@@ -306,7 +308,23 @@ const ticTacToe = (() => {
                 }
             
             } else {
-                let index;
+                if (emptyBoard) {
+                    // Do the random first move;
+                }
+                
+                randomPlay();
+            }
+                
+            renderBoardState();
+
+            game.nextMove();            
+        
+
+
+        }
+
+        const randomPlay = () => {
+            let index;
             
                 // Check for a free spot to play
                 do {
@@ -316,11 +334,6 @@ const ticTacToe = (() => {
                 // Update boardState bot
                 setGame.playerOne.isPlaying ? updateBoardState(index, setGame.playerOne.symbol) : updateBoardState(index, setGame.playerTwo.symbol);
             }
-                
-            renderBoardState();
-
-            game.nextMove();            
-        }
 
         // Update boardState array
         const updateBoardState = (update, symbol) => boardState.splice(update, 1, symbol);
