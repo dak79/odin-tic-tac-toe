@@ -315,6 +315,7 @@ const ticTacToe = (() => {
                 randomPlay();
             }
 
+
             //console.log(boardState);
                 
             renderBoardState();
@@ -347,139 +348,39 @@ const ticTacToe = (() => {
         const updateBoardState = (row, col, symbol) => boardState[row].splice(col, 1, symbol);
         
         // Render boardState array
-        const renderBoardState = () => getDOMElements.spots.forEach(spot => {
-                spot.textContent = boardState[spot.dataset.row][spot.dataset.column]
-        });
-
+        const renderBoardState = () => getDOMElements.spots.forEach(spot => spot.textContent = boardState[spot.dataset.row][spot.dataset.column]);
 
         // Evalutate boardState: winning or tie 
-        const evalutateBoard = () => {
+        const evalutateBoard = (symbol) => {
+
+            // Horizontal win
+            let horizontalWins = boardState.map(row => row.every(value => value === symbol));
+
+            // Diagonal win
+            let diagonalWins = boardState.map((row, index) => row[index] === symbol || row[2 - index] === symbol).every(value => value === true);
             
-            // Search for an orizontal win
-            for (let row = 0; row < 3; row++) {
-                if (boardState[row][0] === boardState[row][1] && boardState[row][1] === boardState[row][2] && boardState[row][0]) {
+            // Vertical win 
+            let verticalWins
 
-                    if (boardState[row][0] === 'X'){
-                        setGame.playerOne.winner = setGame.playerOne.setWinner(true);
-                    } else {
-                        setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);
-                    }
-
-                    return 'win'
-                }
-            }
-
-            // Search for a vertical win 
             for (let col = 0; col < 3; col++) {
                 if (boardState[0][col] === boardState[1][col] && boardState[1][col] === boardState[2][col] && boardState[0][col]) {
-                    
-                    if(boardState[0][col] === 'X') {
-                        setGame.playerOne.winner = setGame.playerOne.setWinner(true);
-                    } else {
-                        setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);
-                    }
-
-                    return 'win'
+                    verticalWins = true;
                 }
             }  
 
-            // Search diagonal win
-            if (boardState[0][0] === boardState[1][1] && boardState[1][1] === boardState[2][2] && boardState[0][0]) {
-
-                if(boardState[0][0] === 'X') {
-                    setGame.playerOne.winner = setGame.playerOne.setWinner(true);
-                } else {
-                    setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);
-                }
-
-                return 'win'
+            if (verticalWins || horizontalWins.includes(true) || diagonalWins) {
+                return symbol;
             }
-
-            if (boardState[0][2] === boardState[1][1] && boardState[1][1] === boardState[2][0] && boardState[0][2]) {
-
-                if(boardState[0][2] === 'X') {
-                    setGame.playerOne.winner = setGame.playerOne.setWinner(true);
-                } else {
-                    setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);
-                }
-
-                return 'win'
-            }
-
+            
             const availableMoves = isMoveLeft();
-
-           if (!availableMoves) {
-                 return 'tie';
-             }
-
             
-        }
-
-        const isMoveLeft = () => {
-            for (let i = 0; i < 3; i++){
-                for (let j = 0; j < 3; j++){
-                    if (boardState[i][j] === null){
-                        return true
-                    }
-                }
+            if (!availableMoves) {
+                return 'tie';
             }
-
-            return false
         }
 
+        const isMoveLeft = () => boardState.map(row => row.some(value => value === null)).some(value => value === true);
 
-    
-
-        // // Array of winning patterns
-        // const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-        
-        // // Store player moves in arrays
-        // let playerOneMoves = [];
-        // let playerTwoMoves = [];
-        
-        // const finalBoard = () => {
-        // playerOneMoves = [];
-        // playerTwoMoves = [];
-    
-        //     const symbol = setGame.playerOne.isPlaying ? setGame.playerOne.symbol : setGame.playerTwo.symbol;
-            
-        //     // Fill playerMoves array
-        //     let index = boardState.indexOf(symbol);
-        //     while (index !== -1) {
-        //         setGame.playerOne.isPlaying ? playerOneMoves.push(index) : playerTwoMoves.push(index);
-        //         index = boardState.indexOf(symbol, index + 1);
-        //     }
-
-        //     const searchWinnerOrTie = () => {
-
-        //         // Search for a winner
-        //         for (let i = 0; i < 8; i++) { 
-        //             const winnerExist = winningPatterns[i].every(winningPattern => setGame.playerOne.isPlaying ? playerOneMoves.includes(winningPattern) : playerTwoMoves.includes(winningPattern));
-                    
-        //             if (winnerExist) {
-        //                 if (setGame.playerOne.isPlaying) {
-        //                     setGame.playerOne.winner = setGame.playerOne.setWinner(true);
-        //                 } else {
-        //                     setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);
-        //                 }
-
-        //                 return 'win';
-        //             }
-        //         }
-    
-        //         //Search for a tie
-        //         // const availableMoves = boardState.includes(null);
-                
-        //         // if (!availableMoves) {
-        //         //     return 'tie';
-        //         // }
-        //     }
-
-        //     const winOrTie = searchWinnerOrTie();
-    
-        //     return winOrTie ? winOrTie : 'next';
-        // }
-    
         const resetBoardState = () => {
             boardState.forEach((spot, index) => {
                 spot = null;
@@ -497,7 +398,6 @@ const ticTacToe = (() => {
         return {
             boardState,
             play,
-            //finalBoard,
             evalutateBoard,
             resetBoardState
         };
@@ -542,13 +442,27 @@ const ticTacToe = (() => {
         }
 
         function nextMove() {
-            const finalTurnStatus = gameBoard.evalutateBoard();
+            let whoIsPlayng = setGame.playerOne.isPlaying ? setGame.playerOne.symbol : setGame.playerTwo.symbol;
+            let finalTurnStatus = gameBoard.evalutateBoard(whoIsPlayng);
 
             if (!finalTurnStatus) {
                 switchTurn();
                 setTimeout(inPlay, 1000);
             
             } else {
+                if (finalTurnStatus === 'X') {
+                    setGame.playerOne.winner = setGame.playerOne.setWinner(true);
+                    finalTurnStatus = 'win'
+                }
+                
+                if (finalTurnStatus === '0') {
+                    setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);
+
+                    finalTurnStatus = 'win';
+
+                }
+                    
+                    
                 end(finalTurnStatus);
             }
         }
