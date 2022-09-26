@@ -298,7 +298,7 @@ const ticTacToe = (() => {
     
         function play(event) {
             
-            let emptyBoard = boardState.every(row => row.forEach(spot => spot === null));
+            // let emptyBoard = boardState.every(row => row.forEach(spot => spot === null));
             
             if (setGame.playerOne.controller === 'human' && setGame.playerOne.isPlaying || setGame.playerTwo.controller === 'human' && setGame.playerTwo.isPlaying) {
                 if (!event.target.textContent) {
@@ -308,12 +308,14 @@ const ticTacToe = (() => {
                 }
             
             } else {
-                if (emptyBoard) {
-                    // Do the random first move;
-                }
+                // if (emptyBoard) {
+                //     // Do the random first move;
+                // }
                 
                 randomPlay();
             }
+
+            //console.log(boardState);
                 
             renderBoardState();
 
@@ -336,13 +338,13 @@ const ticTacToe = (() => {
             }
 
         // Update boardState array
-        const updateBoardState = (col, row, symbol) => {
-            boardState.splice(row[col], 1, symbol)
-            console.log(boardState);
-        };
+        const updateBoardState = (row, col, symbol) => boardState[row].splice(col, 1, symbol);
         
         // Render boardState array
-        const renderBoardState = () => getDOMElements.spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
+        const renderBoardState = () => getDOMElements.spots.forEach(spot => spot.textContent = boardState[spot.dataset.row][spot.dataset.column]);
+                
+    
+
 
         // Array of winning patterns
         const winningPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
