@@ -326,15 +326,18 @@ const ticTacToe = (() => {
         }
 
         const randomPlay = () => {
-            let index;
+            let row;
+            let col;
             
                 // Check for a free spot to play
                 do {
-                    index = Math.round(Math.random() * 9)
-                } while (boardState[index] !== null)
+                    row = Math.round(Math.random() * 2);
+                    col = Math.round(Math.random() * 2);
+                    console.log('searching legal move');
+                } while (boardState[row][col] !== null)
 
                 // Update boardState bot
-                setGame.playerOne.isPlaying ? updateBoardState(index, setGame.playerOne.symbol) : updateBoardState(index, setGame.playerTwo.symbol);
+                setGame.playerOne.isPlaying ? updateBoardState(row, col, setGame.playerOne.symbol) : updateBoardState(row, col, setGame.playerTwo.symbol);
             }
 
         // Update boardState array
