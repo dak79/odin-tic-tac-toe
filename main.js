@@ -298,13 +298,13 @@ const ticTacToe = (() => {
     
         function play(event) {
             
-            let emptyBoard = boardState.every(spot => spot === null);
+            let emptyBoard = boardState.every(row => row.forEach(spot => spot === null));
             
             if (setGame.playerOne.controller === 'human' && setGame.playerOne.isPlaying || setGame.playerTwo.controller === 'human' && setGame.playerTwo.isPlaying) {
                 if (!event.target.textContent) {
                     
                     // Update boardState human
-                    setGame.playerOne.isPlaying ? updateBoardState(event.target.dataset.index, setGame.playerOne.symbol) : updateBoardState(event.target.dataset.index, setGame.playerTwo.symbol);
+                    setGame.playerOne.isPlaying ? updateBoardState(event.target.dataset.row, event.target.dataset.column, setGame.playerOne.symbol) : updateBoardState(event.target.dataset.row, event.target.dataset.column, setGame.playerTwo.symbol);
                 }
             
             } else {
@@ -336,7 +336,10 @@ const ticTacToe = (() => {
             }
 
         // Update boardState array
-        const updateBoardState = (update, symbol) => boardState.splice(update, 1, symbol);
+        const updateBoardState = (col, row, symbol) => {
+            boardState.splice(row[col], 1, symbol)
+            console.log(boardState);
+        };
         
         // Render boardState array
         const renderBoardState = () => getDOMElements.spots.forEach(spot => spot.textContent = boardState[spot.dataset.index]);
@@ -379,11 +382,11 @@ const ticTacToe = (() => {
                 }
     
                 //Search for a tie
-                const availableMoves = boardState.includes(null);
+                // const availableMoves = boardState.includes(null);
                 
-                if (!availableMoves) {
-                    return 'tie';
-                }
+                // if (!availableMoves) {
+                //     return 'tie';
+                // }
             }
 
             const winOrTie = searchWinnerOrTie();
