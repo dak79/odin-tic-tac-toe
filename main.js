@@ -147,6 +147,12 @@ const ticTacToe = (() => {
                 playerTwo.controller = playerTwo.setController('bot');
             }
         }
+
+        const whoIsPlayng = () => setGame.playerOne.isPlaying ? setGame.playerOne.symbol : setGame.playerTwo.symbol;
+
+        const isHuman = player => player === 'X' && playerOne.controller === 'human' || player === '0' && playerTwo.controller === 'human' ? true : false;
+
+        
     
         const resetPlayer = () => {
             playerOne.isPlaying = playerOne.setIsPlaying(true);
@@ -181,19 +187,13 @@ const ticTacToe = (() => {
 
         }
     
-        const disableFooterBtn = () => {
-            getDOMElements.playFirst.forEach(button => button.disabled = true);
-            getDOMElements.changeNameBtns.forEach(button => button.disabled = true);
-            getDOMElements.btnStart.disabled = true;
-            getDOMElements.playerController.forEach(button => button.disabled = true);
-        }
-    
         return {
             playerOne,
             playerTwo,
+            whoIsPlayng,
+            isHuman,
             resetPlayer,
-            resetFooterBtn,
-            disableFooterBtn
+            resetFooterBtn
         };
     })();
     
@@ -222,6 +222,13 @@ const ticTacToe = (() => {
             getDOMElements.playerOneName.classList.remove('in-play');
             getDOMElements.playerTwoName.classList.remove('in-play');
         }
+
+        const disableFooterBtn = () => {
+            getDOMElements.playFirst.forEach(button => button.disabled = true);
+            getDOMElements.changeNameBtns.forEach(button => button.disabled = true);
+            getDOMElements.btnStart.disabled = true;
+            getDOMElements.playerController.forEach(button => button.disabled = true);
+        }
     
         const restartGame = () => {
     
@@ -240,7 +247,7 @@ const ticTacToe = (() => {
         const inGame = () => {
             toggleInfoText();
             renderPlayerTurn();
-            setGame.disableFooterBtn();
+            disableFooterBtn();
         }
 
         const winningMessage = (result) => {
@@ -297,52 +304,45 @@ const ticTacToe = (() => {
         ];
     
         function play(event) {
-            
-            // let emptyBoard = boardState.every(row => row.forEach(spot => spot === null));
-            
-            if (setGame.playerOne.controller === 'human' && setGame.playerOne.isPlaying || setGame.playerTwo.controller === 'human' && setGame.playerTwo.isPlaying) {
+
+            const player = setGame.whoIsPlayng();
+            const isHuman = setGame.isHuman(player);
+
+            if (isHuman) {
                 if (!event.target.textContent) {
                     
-                    // Update boardState human
-                    setGame.playerOne.isPlaying ? updateBoardState(event.target.dataset.row, event.target.dataset.column, setGame.playerOne.symbol) : updateBoardState(event.target.dataset.row, event.target.dataset.column, setGame.playerTwo.symbol);
+                    updateBoardState(event.target.dataset.row, event.target.dataset.column, player)
+                } else {
+                    return 0;
                 }
-            
             } else {
+                console.log('he is a bot')
                 // if (emptyBoard) {
                 //     // Do the random first move;
                 // }
                 
                 randomPlay();
+
+                ///// SIAMO QUA /////
             }
 
-
-            //console.log(boardState);
-                
             renderBoardState();
 
-           
-
-
-            game.nextMove();            
-        
-
-
+            game.nextMove(player, isHuman);            
         }
 
         const randomPlay = () => {
             let row;
             let col;
+            // Check for a free spot to play
+            do {
+                row = Math.round(Math.random() * 2);
+                col = Math.round(Math.random() * 2);
+            } while (boardState[row][col] !== null)
             
-                // Check for a free spot to play
-                do {
-                    row = Math.round(Math.random() * 2);
-                    col = Math.round(Math.random() * 2);
-                    console.log('searching legal move');
-                } while (boardState[row][col] !== null)
-
-                // Update boardState bot
-                setGame.playerOne.isPlaying ? updateBoardState(row, col, setGame.playerOne.symbol) : updateBoardState(row, col, setGame.playerTwo.symbol);
-            }
+            // Update boardState bot
+            setGame.playerOne.isPlaying ? updateBoardState(row, col, setGame.playerOne.symbol) : updateBoardState(row, col, setGame.playerTwo.symbol);
+        }
 
         // Update boardState array
         const updateBoardState = (row, col, symbol) => boardState[row].splice(col, 1, symbol);
@@ -371,11 +371,13 @@ const ticTacToe = (() => {
             if (verticalWins || horizontalWins.includes(true) || diagonalWins) {
                 return symbol;
             }
-            
+        }
+
+        const itsAtie = () => {
             const availableMoves = isMoveLeft();
             
             if (!availableMoves) {
-                return 'tie';
+                return true;
             }
         }
 
@@ -393,6 +395,7 @@ const ticTacToe = (() => {
         return {
             play,
             evalutateBoard,
+            itsAtie,
             resetBoardState
         };
     })();
@@ -401,68 +404,59 @@ const ticTacToe = (() => {
 
         // Add Listener Start Button
         getDOMElements.btnStart.addEventListener('click', start);
-        
+
         function start() {
             gameDisplay.toggleBoard();
             gameDisplay.inGame();
-
-            // Player or Bot first play
-            if (setGame.playerOne.controller === 'human' && setGame.playerOne.isPlaying || setGame.playerTwo.controller === 'human' && setGame.playerTwo.isPlaying) {
-                getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play));
-            } else {
-                setTimeout(gameBoard.play, 1000);   
-            }
+            
+            const isHuman = setGame.isHuman(setGame.whoIsPlayng());
+           
+            isHuman ? getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play)) : setTimeout(gameBoard.play, 1000);  
         }
     
-        function switchTurn () {
-            if (setGame.playerOne.isPlaying) {
-                setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(false);
-                setGame.playerTwo.isPlaying = setGame.playerTwo.setIsPlaying(true);
-            } else {
-                setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(true);
-                setGame.playerTwo.isPlaying = setGame.playerTwo.setIsPlaying(false);
-            }            
-            gameDisplay.renderPlayerTurn();
-        }
-
+        const switchTurn = player => player === 'X' ? setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(false) : setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(true);
+        
         function inPlay() {
-
-            if (setGame.playerOne.controller === 'human' && setGame.playerOne.isPlaying || setGame.playerTwo.controller === 'human' && setGame.playerTwo.isPlaying) {
+            
+            const isHuman = setGame.isHuman(setGame.whoIsPlayng());
+            
+            if (isHuman) {    
                 getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play));
             } else {
                 getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.play));
-                gameBoard.play();
+                gameBoard.play()
             }
         }
 
-        function nextMove() {
-            let whoIsPlayng = setGame.playerOne.isPlaying ? setGame.playerOne.symbol : setGame.playerTwo.symbol;
-            let finalTurnStatus = gameBoard.evalutateBoard(whoIsPlayng);
+        function nextMove(player) {
 
-            if (!finalTurnStatus) {
-                switchTurn();
-                setTimeout(inPlay, 1000);
-            
+            const playerWins = gameBoard.evalutateBoard(player);
+            const isAtie = gameBoard.itsAtie();
+
+            if (playerWins) {
+                end(playerWins);
+            } else if (isAtie) {
+                end('tie');
             } else {
-                if (finalTurnStatus === 'X') {
-                    setGame.playerOne.winner = setGame.playerOne.setWinner(true);
-                    finalTurnStatus = 'win'
-                }
-                
-                if (finalTurnStatus === '0') {
-                    setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);
-
-                    finalTurnStatus = 'win';
-
-                }
-                    
-                    
-                end(finalTurnStatus);
+                switchTurn(player);
+                gameDisplay.renderPlayerTurn();
+                setTimeout(inPlay, 1000);
             }
         }
     
-        function end (nextState) {
-            gameDisplay.endGame(nextState);
+        function end (symbol) {
+            let gameOver;
+
+            if (symbol === 'X') {
+                setGame.playerOne.winner = setGame.playerOne.setWinner(true);
+                gameOver = 'win'
+            } else if (symbol === '0') {
+                setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);gameOver = 'win';
+            } else {
+                gameOver = 'tie'
+            }
+
+            gameDisplay.endGame(gameOver);
             gameBoard.resetBoardState();
             setGame.resetPlayer();
         }
