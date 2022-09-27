@@ -382,13 +382,8 @@ const ticTacToe = (() => {
         const isMoveLeft = () => boardState.map(row => row.some(value => value === null)).some(value => value === true);
 
         const resetBoardState = () => {
-            boardState.forEach((spot, index) => {
-                spot = null;
-                boardState[index] = spot;
-            });
+            boardState.map(row => row.splice(0, 3, null, null, null));
             
-            console.log(boardState);
-
             getDOMElements.spots.forEach(spot => spot.textContent = '');
            
             // Remove Listener
@@ -396,7 +391,6 @@ const ticTacToe = (() => {
         }
     
         return {
-            boardState,
             play,
             evalutateBoard,
             resetBoardState
