@@ -334,14 +334,16 @@ const ticTacToe = (() => {
         const randomPlay = () => {
             let row;
             let col;
-            // Check for a free spot to play
+
             do {
                 row = Math.round(Math.random() * 2);
                 col = Math.round(Math.random() * 2);
             } while (boardState[row][col] !== null)
+
+            const symbol = setGame.whoIsPlayng();
             
-            // Update boardState bot
-            setGame.playerOne.isPlaying ? updateBoardState(row, col, setGame.playerOne.symbol) : updateBoardState(row, col, setGame.playerTwo.symbol);
+            updateBoardState(row, col, symbol);
+            
         }
 
         // Update boardState array
