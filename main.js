@@ -431,13 +431,10 @@ const ticTacToe = (() => {
         }
 
         function nextMove(player) {
-
-            const playerWins = gameBoard.evalutateBoard(player);
-            const isAtie = gameBoard.itsAtie();
-
-            if (playerWins) {
-                end(playerWins);
-            } else if (isAtie) {
+            
+            if (gameBoard.evalutateBoard(player)) {
+                end(gameBoard.evalutateBoard(player));
+            } else if (gameBoard.itsAtie()) {
                 end('tie');
             } else {
                 switchTurn(player);
