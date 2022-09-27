@@ -152,8 +152,6 @@ const ticTacToe = (() => {
 
         const isHuman = player => player === 'X' && playerOne.controller === 'human' || player === '0' && playerTwo.controller === 'human' ? true : false;
 
-        
-    
         const resetPlayer = () => {
             playerOne.isPlaying = playerOne.setIsPlaying(true);
             playerOne.controller = playerOne.setController('human');
@@ -431,7 +429,7 @@ const ticTacToe = (() => {
         }
 
         function nextMove(player) {
-            
+
             if (gameBoard.evalutateBoard(player)) {
                 end(gameBoard.evalutateBoard(player));
             } else if (gameBoard.itsAtie()) {
