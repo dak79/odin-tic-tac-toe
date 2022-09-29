@@ -267,6 +267,25 @@ footer .player-two-btn .btn-radio-player-two {
     justify-self: flex-start;
 }
 
+footer .player-one-btn .btn-radio-player-one,
+footer .player-two-btn .btn-radio-player-two {
+    display: grid;
+        grid:
+            [row1-start] "human-or-bot-btn" 1fr [row1-end]
+            [row2-start] "bot-level" 1fr [row2-end]
+            / 1fr;
+}
+
+footer .player-one-btn .btn-radio-player-one .human-or-bot,
+footer .player-two-btn .btn-radio-player-two .human-or-bot {
+    grid-area: human-or-bot-btn;
+}
+
+footer .player-one-btn .btn-radio-player-one .bot-level,
+footer .player-two-btn .btn-radio-player-two .bot-level {
+    grid-area: bot-level;
+}
+
 .btn-change {
     padding: 1rem 2rem;
     max-width: 10rem;
