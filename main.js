@@ -1,13 +1,14 @@
 const ticTacToe = (() => {
 
-    const player = (name, symbol, isPlaying) => {
-        let winner = false;
+    const player = (name, symbol, isPlaying, isMax) => {
         let controller = 'human'; 
         let botLevel = null;
+        let winner = false;
         const setName = value => name = value;
         const setIsPlaying = value => isPlaying = value;
         const setController = value => controller = value;
         const setBotLevel = value => botLevel = value;
+        const setIsMax = value => isMax = value;
         const setWinner = value => winner = value;
     
         return {
@@ -17,10 +18,12 @@ const ticTacToe = (() => {
             controller,
             botLevel,
             winner,
+            isMax,
             setName,
             setIsPlaying,
             setController,
             setBotLevel,
+            setIsMax,
             setWinner
         };
     } 
@@ -43,8 +46,20 @@ const ticTacToe = (() => {
 
         }
 
+        const aiValutation = (symbol) => {
+
+            const isMax = setGame.playerOne.symbol === symbol ? setGame.playerOne.isMax ? true : false : setGame.playerTwo.isMax ? true : false;
+
+            if (isMax) {
+                return 10
+            } else {
+                return -10
+            }
+        }
+
         return {
-            randomPlay
+            randomPlay,
+            aiValutation
         }
 
     })();
@@ -83,8 +98,8 @@ const ticTacToe = (() => {
     const setGame = (()=> {
         
         // Create standard instances
-        const playerOne = player('Player 1', 'X', true);
-        const playerTwo = player('Player 2', '0', false);
+        const playerOne = player('Player 1', 'X', true, true);
+        const playerTwo = player('Player 2', '0', false, false);
         
         // Event Listeners Footer
         getDOMElements.playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
@@ -156,9 +171,15 @@ const ticTacToe = (() => {
             if (startPlaying === 'player-one-play-first') {
                 playerOne.isPlaying = playerOne.setIsPlaying(true);
                 playerTwo.isPlaying = playerTwo.setIsPlaying(false);
+
+                playerOne.isMax = playerOne.setIsMax(true);
+                playerTwo.isMax = playerTwo.setIsMax(false);
             } else {
                 playerOne.isPlaying = playerOne.setIsPlaying(false);
                 playerTwo.isPlaying = playerTwo.setIsPlaying(true);
+
+                playerOne.isMax = playerOne.setIsMax(false);
+                playerTwo.isMax = playerTwo.setIsMax(true);
             }
         }
 
@@ -203,11 +224,14 @@ const ticTacToe = (() => {
             playerOne.controller = playerOne.setController('human');
             playerOne.winner = playerOne.setWinner(false);
             playerOne.botLevel = playerOne.setBotLevel(null);
+            playerOne.isMax = playerOne.setIsMax(true);
+            
 
             playerTwo.isPlaying = playerTwo.setIsPlaying(false);
             playerTwo.controller = playerTwo.setController('human');
             playerTwo.winner = playerTwo.setWinner(false);
             playerTwo.botLevel = playerTwo.setBotLevel(null);
+            playerTwo.isMax = playerTwo.setIsMax(false);
         }
     
         return {
@@ -428,21 +452,6 @@ const ticTacToe = (() => {
             game.nextMove(player, isHuman);            
         }
 
-        // const randomPlay = () => {
-        //     const symbol = setGame.whoIsPlayng();
-        //     let row;
-        //     let col;
-
-        //     do {
-        //         row = Math.round(Math.random() * 2);
-        //         col = Math.round(Math.random() * 2);
-        //     } while (boardState[row][col] !== null)
-
-            
-        //     updateBoardState(row, col, symbol);
-            
-        // }
-
         // Update boardState array
         const updateBoardState = (row, col, symbol) => boardState[row].splice(col, 1, symbol);
         
@@ -450,7 +459,7 @@ const ticTacToe = (() => {
         const renderBoardState = () => getDOMElements.spots.forEach(spot => spot.textContent = boardState[spot.dataset.row][spot.dataset.column]);
 
         // Evalutate boardState: winning or tie 
-        const evalutateBoard = (symbol) => {
+        const evalutateBoard = (symbol, aiRequest) => {
 
             // Horizontal win
             let horizontalWins = boardState.map(row => row.every(value => value === symbol));
@@ -468,7 +477,9 @@ const ticTacToe = (() => {
             }  
 
             if (verticalWins || horizontalWins.includes(true) || diagonalWins) {
-                return symbol;
+                return aiRequest ? playerAi.aiValutation(symbol) : symbol;
+            } else {
+                return 0;
             }
         }
 
@@ -531,8 +542,8 @@ const ticTacToe = (() => {
 
         function nextMove(player) {
 
-            if (gameBoard.evalutateBoard(player)) {
-                end(gameBoard.evalutateBoard(player));
+            if (gameBoard.evalutateBoard(player, false)) {
+                end(gameBoard.evalutateBoard(player, false));
             } else if (gameBoard.itsAtie()) {
                 end('tie');
             } else {
