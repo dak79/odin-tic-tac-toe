@@ -62,9 +62,6 @@ const ticTacToe = (() => {
         const playFirst = document.querySelectorAll('input[name=radio-play-first]');
         const changeNameBtns = document.querySelectorAll('.btn-change');
         const playerController = document.querySelectorAll('.radio-controller');
-        const playerOneBotLevel = document.querySelector('#bot-level-player-one');
-        const playerTwoBotLevel = document.querySelector('#bot-level-player-two');
-        const botLevels = document.querySelectorAll('.bot-level');
         const btnStart = document.querySelector('#btn-start');
         
         return {
@@ -78,9 +75,6 @@ const ticTacToe = (() => {
             playFirst,
             changeNameBtns,
             playerController,
-            
-            playerOneBotLevel,
-            playerTwoBotLevel,
             btnStart
         }
         
@@ -182,7 +176,7 @@ const ticTacToe = (() => {
             } else if (controller === 'controller-player-two-human') {
                 playerTwo.controller = playerTwo.setController('human');
                 gameDisplay.resetBotLevel(event);
-                pleyerTwo.botLevel = playerTwo.setBotLevel(null);
+                playerTwo.botLevel = playerTwo.setBotLevel(null);
             } else {
                 playerTwo.controller = playerTwo.setController('bot');
                 gameDisplay.botLevel(event);
@@ -208,10 +202,12 @@ const ticTacToe = (() => {
             playerOne.isPlaying = playerOne.setIsPlaying(true);
             playerOne.controller = playerOne.setController('human');
             playerOne.winner = playerOne.setWinner(false);
+            playerOne.botLevel = playerOne.setBotLevel(null);
 
             playerTwo.isPlaying = playerTwo.setIsPlaying(false);
             playerTwo.controller = playerTwo.setController('human');
             playerTwo.winner = playerTwo.setWinner(false);
+            playerTwo.botLevel = playerTwo.setBotLevel(null);
         }
     
         return {
@@ -255,9 +251,11 @@ const ticTacToe = (() => {
 
             selectLabel.textContent = 'Difficulty:';
             selectLabel.setAttribute('for', 'levels');
+            selectLabel.classList.add('invisible');
 
             select.setAttribute('name', 'levels');
             select.setAttribute('id', 'levels');
+            select.classList.add('menu-style');
 
             optionEasy.textContent = 'Easy';
             optionEasy.setAttribute('value', 'easy');
@@ -290,25 +288,37 @@ const ticTacToe = (() => {
             getDOMElements.playFirst.forEach(button => button.disabled = true);
             getDOMElements.changeNameBtns.forEach(button => button.disabled = true);
             getDOMElements.btnStart.disabled = true;
-            getDOMElements.playerController.forEach(button => button.disabled = true);
+            getDOMElements.playerController.forEach((button, index) => {
+                button.disabled = true;
+
+                if (button.checked && index === 1 || button.checked && index === 3) {
+                    const disableSelect = document.querySelectorAll('.menu-style');
+                    disableSelect.forEach(menu => menu.setAttribute('disabled', true))
+                }
+            });
         }
 
         const resetFooterBtn = () => {
+
             getDOMElements.playFirst.forEach((button, index) => {
                 button.disabled = false
-        
+                
                 if (!button.checked && index === 0) button.checked = true;
-
+                
                 if (button.checked && index === 1) button.checked = false;
             });
-
+            
             getDOMElements.playerController.forEach((button, index) => {
                 button.disabled = false;
 
-                if (!button.checked && index === 0 || !button.checked && index === 2) button.checked = true;
+                if (!button.checked && index === 0 || !button.checked && index === 2) {
+                    button.checked = true;
+                    const removeSelect = document.querySelectorAll('.menu-style');
 
-                if (button.checked && index === 1 || button.checked && index === 3) button.checked = false;
-
+                    const removeSelectLabel = document.querySelectorAll('label[for=levels]');
+                    removeSelect.forEach(menu => menu.remove());
+                    removeSelectLabel.forEach(label => label.remove());
+                } 
             });
             
             getDOMElements.changeNameBtns.forEach(button => button.disabled = false);
