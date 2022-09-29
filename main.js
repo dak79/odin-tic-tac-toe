@@ -182,7 +182,7 @@ const ticTacToe = (() => {
             getDOMElements.infoText.classList.toggle('invisible');
         }
 
-        const renderPlayerTurn = () => {
+        const playerTurn = () => {
             if (setGame.playerOne.isPlaying) {
                 getDOMElements.playerOneName.classList.add('in-play');
                 getDOMElements.playerTwoName.classList.remove('in-play');
@@ -192,7 +192,7 @@ const ticTacToe = (() => {
             }
         }
 
-        const resetRenderPlayerTurn = () => {
+        const resetPlayerTurn = () => {
             getDOMElements.playerOneName.classList.remove('in-play');
             getDOMElements.playerTwoName.classList.remove('in-play');
         }
@@ -204,16 +204,6 @@ const ticTacToe = (() => {
             getDOMElements.playerController.forEach(button => button.disabled = true);
         }
 
-        const resetPlayer = () => {
-            playerOne.isPlaying = playerOne.setIsPlaying(true);
-            playerOne.controller = playerOne.setController('human');
-            playerOne.winner = playerOne.setWinner(false);
-
-            playerTwo.isPlaying = playerTwo.setIsPlaying(false);
-            playerTwo.controller = playerTwo.setController('human');
-            playerTwo.winner = playerTwo.setWinner(false);
-        }
-    
         const resetFooterBtn = () => {
             getDOMElements.playFirst.forEach((button, index) => {
                 button.disabled = false
@@ -234,26 +224,6 @@ const ticTacToe = (() => {
             
             getDOMElements.changeNameBtns.forEach(button => button.disabled = false);
             getDOMElements.btnStart.disabled = false;
-        }
-    
-        const restartGame = () => {
-    
-            // Get the winning message
-            const winningDisplay = document.querySelector('.winning-msg');
-    
-            resetFooterBtn();
-    
-            if (winningDisplay) {
-                winningDisplay.remove(); 
-            }
-            
-            toggleInfoText();
-        }
-
-        const inGame = () => {
-            toggleInfoText();
-            renderPlayerTurn();
-            disableFooterBtn();
         }
 
         const winningMessage = (result) => {
@@ -288,16 +258,36 @@ const ticTacToe = (() => {
             }
         }
     
+        const startGame = () => {
+            toggleBoard();
+            toggleInfoText();
+            playerTurn();
+            disableFooterBtn();
+        }
+        
         const endGame = (result) => {
-            resetRenderPlayerTurn();
+            resetPlayerTurn();
             toggleBoard();
             winningMessage(result);
-        } 
+        }
+
+        const restartGame = () => {
+    
+            // Get the winning message
+            const winningDisplay = document.querySelector('.winning-msg');
+    
+            resetFooterBtn();
+    
+            if (winningDisplay) {
+                winningDisplay.remove(); 
+            }
+            
+            toggleInfoText();
+        }
     
         return {
-            renderPlayerTurn,
-            toggleBoard,
-            inGame,
+            playerTurn,
+            startGame,
             endGame
         };
     })();
@@ -338,6 +328,7 @@ const ticTacToe = (() => {
         }
 
         const randomPlay = () => {
+            const symbol = setGame.whoIsPlayng();
             let row;
             let col;
 
@@ -346,7 +337,6 @@ const ticTacToe = (() => {
                 col = Math.round(Math.random() * 2);
             } while (boardState[row][col] !== null)
 
-            const symbol = setGame.whoIsPlayng();
             
             updateBoardState(row, col, symbol);
             
@@ -414,10 +404,10 @@ const ticTacToe = (() => {
         getDOMElements.btnStart.addEventListener('click', start);
 
         function start() {
-            gameDisplay.toggleBoard();
-            gameDisplay.inGame();
             
             const isHuman = setGame.isHuman(setGame.whoIsPlayng());
+            gameDisplay.startGame();
+            
            
             isHuman ? getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play)) : setTimeout(gameBoard.play, 1000);  
         }
@@ -444,7 +434,7 @@ const ticTacToe = (() => {
                 end('tie');
             } else {
                 switchTurn(player);
-                gameDisplay.renderPlayerTurn();
+                gameDisplay.playerTurn();
                 setTimeout(inPlay, 1000);
             }
         }
