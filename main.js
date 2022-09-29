@@ -3,9 +3,11 @@ const ticTacToe = (() => {
     const player = (name, symbol, isPlaying) => {
         let winner = false;
         let controller = 'human'; 
+        let botLevel = null;
         const setName = value => name = value;
         const setIsPlaying = value => isPlaying = value;
         const setController = value => controller = value;
+        const setBotLevel = value => botLevel = value;
         const setWinner = value => winner = value;
     
         return {
@@ -13,13 +15,39 @@ const ticTacToe = (() => {
             symbol,
             isPlaying,
             controller,
+            botLevel,
             winner,
             setName,
             setIsPlaying,
             setController,
+            setBotLevel,
             setWinner
         };
     } 
+
+    const playerAi = (() => {
+        const randomPlay = () => {
+            const symbol = setGame.whoIsPlayng();
+            let row;
+            let col;
+            
+            do {
+                row = Math.round(Math.random() * 2);
+                col = Math.round(Math.random() * 2);
+            } while (gameBoard.boardState[row][col] !== null)
+            
+            gameBoard.updateBoardState(row, col, symbol);
+        }
+
+        const randomOrAi = () => {
+
+        }
+
+        return {
+            randomPlay
+        }
+
+    })();
     
     const getDOMElements = (() => {
 
@@ -141,11 +169,25 @@ const ticTacToe = (() => {
                 playerOne.controller = playerOne.setController('human');
             } else if (controller === 'controller-player-one-bot') {
                 playerOne.controller = playerOne.setController('bot');
+                gameDisplay.botLevel();
+                setLevel(controller);
             } else if (controller === 'controller-player-two-human') {
                 playerTwo.controller = playerTwo.setController('human');
             } else {
                 playerTwo.controller = playerTwo.setController('bot');
+                gameDisplay.botLevel();
+                setLevel(controller);
             }
+        }
+
+        const setLevel = () => {
+            if (controller === 'controller-player-one-bot') {
+                playerOne.setBotLevel('value-on-display');
+            } else {
+                playerTwo.setBotLevel('value-on-display');
+            }
+            // se player 1
+
         }
 
         const whoIsPlayng = () => setGame.playerOne.isPlaying ? setGame.playerOne.symbol : setGame.playerTwo.symbol;
@@ -190,6 +232,10 @@ const ticTacToe = (() => {
                 getDOMElements.playerOneName.classList.remove('in-play');
                 getDOMElements.playerTwoName.classList.add('in-play');
             }
+        }
+
+        const botLevel = () => {
+            
         }
 
         const resetPlayerTurn = () => {
@@ -287,6 +333,7 @@ const ticTacToe = (() => {
     
         return {
             playerTurn,
+            botLevel,
             startGame,
             endGame
         };
@@ -317,7 +364,7 @@ const ticTacToe = (() => {
                 //     // Do the random first move;
                 // }
                 
-                randomPlay();
+                playerAi.randomPlay();
 
                 ///// SIAMO QUA /////
             }
@@ -327,20 +374,20 @@ const ticTacToe = (() => {
             game.nextMove(player, isHuman);            
         }
 
-        const randomPlay = () => {
-            const symbol = setGame.whoIsPlayng();
-            let row;
-            let col;
+        // const randomPlay = () => {
+        //     const symbol = setGame.whoIsPlayng();
+        //     let row;
+        //     let col;
 
-            do {
-                row = Math.round(Math.random() * 2);
-                col = Math.round(Math.random() * 2);
-            } while (boardState[row][col] !== null)
+        //     do {
+        //         row = Math.round(Math.random() * 2);
+        //         col = Math.round(Math.random() * 2);
+        //     } while (boardState[row][col] !== null)
 
             
-            updateBoardState(row, col, symbol);
+        //     updateBoardState(row, col, symbol);
             
-        }
+        // }
 
         // Update boardState array
         const updateBoardState = (row, col, symbol) => boardState[row].splice(col, 1, symbol);
@@ -393,6 +440,8 @@ const ticTacToe = (() => {
         return {
             play,
             evalutateBoard,
+            updateBoardState,
+            boardState,
             itsAtie,
             resetBoardState
         };
