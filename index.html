@@ -51,12 +51,12 @@
                     <button type="button" id="btn-change-name-player-one" class="btn btn-change" data-btn="player-one-name" data-name="Player 1">Change Name</button>
                     <div class="btn-radio-player-one">
                         <div class="human-or-bot">
-                            <input type="radio" name="radio-controller-player-one" value="controller-player-one-human" id="radio-human-player-one" class="radio-controller" checked>
+                            <input type="radio" name="radio-controller-player-one" value="controller-player-one-human" id="radio-human-player-one" class="radio-controller" data-level="player-one" checked>
                             <label for="radio-human-player-one">Human</label>
-                            <input type="radio" name="radio-controller-player-one" id="radio-bot-player-one" value="controller-player-one-bot" class="radio-controller">
+                            <input type="radio" name="radio-controller-player-one" id="radio-bot-player-one" value="controller-player-one-bot" class="radio-controller" data-level="player-one">
                             <label for="radio-bot-player-one">Bot</label>
                         </div>
-                        <div class="bot-level">
+                        <div id="bot-level-player-one" class="bot-level" data-level="player-one">
 
                         </div>
 
@@ -66,12 +66,13 @@
                     <button type="button" id="btn-change-name-player-two" class="btn btn-change" data-btn="player-two-name" data-name="Player 2">Change Name</button>
                     <div class="btn-radio-player-two">
                         <div class="human-or-bot">
-                            <input type="radio" name="radio-controller-player-two" value="controller-player-two-human" id="radio-human-player-two" class="radio-controller" checked>
+                            <input type="radio" name="radio-controller-player-two" value="controller-player-two-human" id="radio-human-player-two" class="radio-controller" data-level="player-two" checked>
                             <label for="radio-human-player-two">Human</label>
-                            <input type="radio" name="radio-controller-player-two" value="controller-player-two-bot" id="radio-bot-player-two" class="radio-controller">
+                            <input type="radio" name="radio-controller-player-two" value="controller-player-two-bot" id="radio-bot-player-two" class="radio-controller"
+                            data-level="player-two">
                             <label for="radio-bot-player-two">Bot</label>
                         </div>
-                        <div class="bot-level">
+                        <div id="bot-level-player-two" class="bot-level" data-level="player-two">
 
                         </div>
                     </div>

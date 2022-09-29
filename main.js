@@ -62,6 +62,9 @@ const ticTacToe = (() => {
         const playFirst = document.querySelectorAll('input[name=radio-play-first]');
         const changeNameBtns = document.querySelectorAll('.btn-change');
         const playerController = document.querySelectorAll('.radio-controller');
+        const playerOneBotLevel = document.querySelector('#bot-level-player-one');
+        const playerTwoBotLevel = document.querySelector('#bot-level-player-two');
+        const botLevels = document.querySelectorAll('.bot-level');
         const btnStart = document.querySelector('#btn-start');
         
         return {
@@ -75,6 +78,9 @@ const ticTacToe = (() => {
             playFirst,
             changeNameBtns,
             playerController,
+            
+            playerOneBotLevel,
+            playerTwoBotLevel,
             btnStart
         }
         
@@ -167,16 +173,20 @@ const ticTacToe = (() => {
 
             if (controller === 'controller-player-one-human') {
                 playerOne.controller = playerOne.setController('human');
+                gameDisplay.resetBotLevel(event);
+                playerOne.botLevel = playerOne.setBotLevel(null);
             } else if (controller === 'controller-player-one-bot') {
                 playerOne.controller = playerOne.setController('bot');
-                gameDisplay.botLevel();
-                setLevel(controller);
+                gameDisplay.botLevel(event);
+                //setLevel(controller);
             } else if (controller === 'controller-player-two-human') {
                 playerTwo.controller = playerTwo.setController('human');
+                gameDisplay.resetBotLevel(event);
+                pleyerTwo.botLevel = playerTwo.setBotLevel(null);
             } else {
                 playerTwo.controller = playerTwo.setController('bot');
-                gameDisplay.botLevel();
-                setLevel(controller);
+                gameDisplay.botLevel(event);
+                //setLevel(controller);
             }
         }
 
@@ -234,8 +244,41 @@ const ticTacToe = (() => {
             }
         }
 
-        const botLevel = () => {
+        const botLevel = (event) => {
+
+            const div = document.querySelector(`#bot-level-${event.target.dataset.level}`);
+            const selectLabel = document.createElement('label');
+            const select = document.createElement('select');
+            const optionEasy = document.createElement('option');
+            const optionMedium = document.createElement('option');
+            const optionUnbeatable = document.createElement('option');
+
+            selectLabel.textContent = 'Difficulty:';
+            selectLabel.setAttribute('for', 'levels');
+
+            select.setAttribute('name', 'levels');
+            select.setAttribute('id', 'levels');
+
+            optionEasy.textContent = 'Easy';
+            optionEasy.setAttribute('value', 'easy');
             
+            optionMedium.textContent = 'Medium';
+            optionMedium.setAttribute('value', 'medium');
+            
+            optionUnbeatable.textContent = 'Unbeatable';
+            optionUnbeatable.setAttribute('value', 'unbeatable');
+
+            div.appendChild(selectLabel);
+            div.appendChild(select);
+            select.appendChild(optionEasy);
+            select.appendChild(optionMedium);
+            select.appendChild(optionUnbeatable);
+        }
+
+        const resetBotLevel = (event) => {
+            const div = document.querySelector(`#bot-level-${event.target.dataset.level}`);
+
+            div.innerHTML = '';
         }
 
         const resetPlayerTurn = () => {
@@ -334,6 +377,7 @@ const ticTacToe = (() => {
         return {
             playerTurn,
             botLevel,
+            resetBotLevel,
             startGame,
             endGame
         };
