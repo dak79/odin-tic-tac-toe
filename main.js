@@ -162,36 +162,12 @@ const ticTacToe = (() => {
             playerTwo.winner = playerTwo.setWinner(false);
         }
     
-        const resetFooterBtn = () => {
-            getDOMElements.playFirst.forEach((button, index) => {
-                button.disabled = false
-        
-                if (!button.checked && index === 0) button.checked = true;
-
-                if (button.checked && index === 1) button.checked = false;
-            });
-
-            getDOMElements.playerController.forEach((button, index) => {
-                button.disabled = false;
-
-                if (!button.checked && index === 0 || !button.checked && index === 2) button.checked = true;
-
-                if (button.checked && index === 1 || button.checked && index === 3) button.checked = false;
-
-            });
-            
-            getDOMElements.changeNameBtns.forEach(button => button.disabled = false);
-            getDOMElements.btnStart.disabled = false;
-
-        }
-    
         return {
             playerOne,
             playerTwo,
             whoIsPlayng,
             isHuman,
-            resetPlayer,
-            resetFooterBtn
+            resetPlayer
         };
     })();
     
@@ -227,13 +203,45 @@ const ticTacToe = (() => {
             getDOMElements.btnStart.disabled = true;
             getDOMElements.playerController.forEach(button => button.disabled = true);
         }
+
+        const resetPlayer = () => {
+            playerOne.isPlaying = playerOne.setIsPlaying(true);
+            playerOne.controller = playerOne.setController('human');
+            playerOne.winner = playerOne.setWinner(false);
+
+            playerTwo.isPlaying = playerTwo.setIsPlaying(false);
+            playerTwo.controller = playerTwo.setController('human');
+            playerTwo.winner = playerTwo.setWinner(false);
+        }
+    
+        const resetFooterBtn = () => {
+            getDOMElements.playFirst.forEach((button, index) => {
+                button.disabled = false
+        
+                if (!button.checked && index === 0) button.checked = true;
+
+                if (button.checked && index === 1) button.checked = false;
+            });
+
+            getDOMElements.playerController.forEach((button, index) => {
+                button.disabled = false;
+
+                if (!button.checked && index === 0 || !button.checked && index === 2) button.checked = true;
+
+                if (button.checked && index === 1 || button.checked && index === 3) button.checked = false;
+
+            });
+            
+            getDOMElements.changeNameBtns.forEach(button => button.disabled = false);
+            getDOMElements.btnStart.disabled = false;
+        }
     
         const restartGame = () => {
     
             // Get the winning message
             const winningDisplay = document.querySelector('.winning-msg');
     
-            setGame.resetFooterBtn();
+            resetFooterBtn();
     
             if (winningDisplay) {
                 winningDisplay.remove(); 
