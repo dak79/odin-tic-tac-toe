@@ -41,29 +41,203 @@ const ticTacToe = (() => {
             
             gameBoard.updateBoardState(row, col, symbol);
         }
-
+        
         const randomOrAi = () => {
+            
+        }
+        
+        const isMaximizer = symbol => setGame.playerOne.symbol === symbol ? setGame.playerOne.isMax ? true : false : setGame.playerTwo.isMax ? true : false;
+        
+        const aiValutation2 = (board, player, opponent, depth) => {
 
+            //Horizontal win
+            for (let row = 0; row < 3; row++) {
+                
+                if(board[row][0] === board[row][1] && board[row][1] === board[row][2] && board[row][0]) {
+                    if (board[row][0] === player) {
+                        return +10
+                    } else if (board[row][0] === opponent) {
+                        return -10
+                    }
+
+                }
+            }
+
+            // Vertical win 
+            for (let col = 0; col < 3; col++) {
+                if (board[0][col] === board[1][col] && board[1][col] === board[2][col] && board[0][col]) {
+                    if (board[0][col] === player) {
+                        return +10
+                    } else if (board[0][col] === opponent) {
+                        return -10
+
+                    }
+                }
+            }
+
+            // Diagonal win
+            if(board[0][0] === board[1][1] && board[1][1] === board[2][2] && board[1][1]) {
+                if (board[0][0] === player) {
+                    return +10
+                } else if (board[0][0] === opponent) {
+                    return -10
+                }
+            }
+
+            if (board[0][2] === board[1][1] && board[1][1] === board[2][0] && board[1][1]) {
+                if (board[0][2] === player) {
+                    return +10
+                } else if (board[0][2] === opponent) {
+                    return -10
+                }
+
+            }
+            
+            return 0
         }
 
-        const aiValutation = (symbol) => {
+        const countMoves = (board, count) => {
+            board.forEach(row => {
+                row.forEach(col => {
+                    col === null ? count += 1 : 0
+                })
+            })
+            return count;
+        }
 
-            const isMax = setGame.playerOne.symbol === symbol ? setGame.playerOne.isMax ? true : false : setGame.playerTwo.isMax ? true : false;
+        const findBestMove = (board, player, opponent) => {
+            let bestMove = {
+                row: null,
+                col: null
+            };
 
-            if (isMax) {
-                return 10
-            } else {
-                return -10
+            let bestMoveValue = -Infinity;
+
+            //for each move in board:
+            board.map((row, rowIndex) => {
+
+                row.map((col, colIndex) => {
+                    if (col === null) {
+                        
+                        // Make a move
+                        board[rowIndex][colIndex] = player;
+                        
+
+                        // Take minimax valutation
+                        let currentMoveValue = minimax(board, player, opponent, 0, false);
+                        console.log(currentMoveValue);
+                        
+
+
+                        // Undo the move
+                        board[rowIndex][colIndex] = null;
+
+                        // Take the best move
+
+                        if (currentMoveValue > bestMoveValue) {
+                            bestMove.row = rowIndex;
+                            bestMove.col = colIndex;
+                            bestMoveValue = currentMoveValue;
+                            console.log(bestMove);
+                        }
+                    } 
+                    
+                })
+            
+            })
+            
+            return bestMove;
+        }
+
+        const minimax = (board, player, opponent, depth, isMax) => {
+
+            let score = aiValutation2(board, player, opponent, depth);
+
+        
+
+            // Base case: minmax find a value of the board state or no move left
+            if (score === 10) {
+                return score;
             }
+
+            if (score === -10) {
+                return score;
+            }
+
+
+            if (gameBoard.isMoveLeft(board) === false) {
+                return 0;
+            }
+
+            // Recursive case
+            if (isMax) {
+             
+                let bestVal = -Infinity
+
+                // Traverse the board
+                board.map((row, rowIndex) => {
+                    row.map((col, colIndex) => {
+
+                        // Find available move
+                        if (col === null) {
+
+                            // Play
+                            board[rowIndex][colIndex] = player;
+                            
+                            // Find a value
+                            let value = minimax(board, player, opponent, depth + 1, false)
+                            
+                            bestVal = Math.max(bestVal, value);
+                            
+                            // Undo the play
+                            board[rowIndex][colIndex] = null;
+                        }
+                    })
+                })
+
+                return bestVal;
+
+            } else {
+               
+                let bestVal = Infinity
+
+                //Traverse the board
+                board.map((row, rowIndex) => {
+                    row.map((col, colIndex) => {
+
+                        // Find available move
+                        if (col === null) {
+
+                            // Play
+                            board[rowIndex][colIndex] = opponent;
+
+                            // Find a value
+                            let value = minimax(board, player, opponent, depth + 1, true);
+
+                            bestVal = Math.min(bestVal, value)
+                            
+                            // Undo the move
+                            board[rowIndex][colIndex] = null;
+                           
+                        }
+
+                    })
+                })
+                return bestVal;
+            }
+
+
         }
 
         return {
             randomPlay,
-            aiValutation
+            countMoves,
+            findBestMove,
+            aiValutation2
         }
 
     })();
-    
+
     const getDOMElements = (() => {
 
         const main = document.querySelector('#display');
@@ -423,78 +597,97 @@ const ticTacToe = (() => {
             [null, null, null],
             [null, null, null]
         ];
+
+        const debugBoardState = [
+            ['0', null, 'X'],
+            [null, null, null],
+            [null, 'X', '0']
+        ];
     
         function play(event) {
 
             const player = setGame.whoIsPlayng();
+            // const opponent = '0';
             const isHuman = setGame.isHuman(player);
+
+            const opponent = player === 'X' ? '0' : 'X';
+            //console.log(`FUNCTION PLAY OPPONENT: ${opponent}`);
+            console
 
             if (isHuman) {
                 if (!event.target.textContent) {
                     
-                    updateBoardState(event.target.dataset.row, event.target.dataset.column, player)
+                    updateBoardState(debugBoardState, event.target.dataset.row, event.target.dataset.column, player)
                 } else {
                     return 0;
                 }
             } else {
                 console.log('he is a bot')
-                // if (emptyBoard) {
-                //     // Do the random first move;
-                // }
                 
-                playerAi.randomPlay();
+                
+                const a = playerAi.findBestMove(debugBoardState, player, opponent);
+                console.log(a)
+                updateBoardState(debugBoardState, a.row, a.col, player);
+                console.log(debugBoardState);
+
+                
 
                 ///// SIAMO QUA /////
             }
 
-            renderBoardState();
+            renderBoardState(debugBoardState);
 
-            game.nextMove(player, isHuman);            
+            game.nextMove(debugBoardState, player, isHuman);            
         }
 
         // Update boardState array
-        const updateBoardState = (row, col, symbol) => boardState[row].splice(col, 1, symbol);
+        const updateBoardState = (board, row, col, symbol) => board[row].splice(col, 1, symbol);
         
         // Render boardState array
-        const renderBoardState = () => getDOMElements.spots.forEach(spot => spot.textContent = boardState[spot.dataset.row][spot.dataset.column]);
+        const renderBoardState = board => getDOMElements.spots.forEach(spot => spot.textContent = board[spot.dataset.row][spot.dataset.column]);
 
         // Evalutate boardState: winning or tie 
-        const evalutateBoard = (symbol, aiRequest) => {
 
-            // Horizontal win
-            let horizontalWins = boardState.map(row => row.every(value => value === symbol));
+        /// DOBBIAMO DEFINIRE BENE DI CHI è LA VITTORIA. se del player che gioca o se dell'avversario.
+        const evalutateBoard = (board, player) => {
+
+            let horizontalWins = board.map(row => row.every(value => value === player));
 
             // Diagonal win
-            let diagonalWins = boardState.map((row, index) => row[index] === symbol || row[2 - index] === symbol).every(value => value === true);
+            let diagonalWins = board.map((row, index) => row[index] === player).every(value => value === true);
+
+            let diagonalWins2 = board.map((row, index) => row[2 - index] === player).every(value => value === true);
+    
             
             // Vertical win 
             let verticalWins
 
             for (let col = 0; col < 3; col++) {
-                if (boardState[0][col] === boardState[1][col] && boardState[1][col] === boardState[2][col] && boardState[0][col]) {
+                if (board[0][col] === board[1][col] && board[1][col] === board[2][col] && board[0][col]) {
                     verticalWins = true;
                 }
             }  
 
-            if (verticalWins || horizontalWins.includes(true) || diagonalWins) {
-                return aiRequest ? playerAi.aiValutation(symbol) : symbol;
+            if (verticalWins || horizontalWins.includes(true) || diagonalWins || diagonalWins2) {
+                return player;
             } else {
                 return 0;
             }
         }
 
+        // REFRACT
         const itsAtie = () => {
-            const availableMoves = isMoveLeft();
+            const availableMoves = isMoveLeft(debugBoardState);
             
             if (!availableMoves) {
                 return true;
             }
         }
 
-        const isMoveLeft = () => boardState.map(row => row.some(value => value === null)).some(value => value === true);
+        const isMoveLeft = board => board.map(row => row.some(value => value === null)).some(value => value === true);
 
-        const resetBoardState = () => {
-            boardState.map(row => row.splice(0, 3, null, null, null));
+        const resetBoardState = board => {
+            board.map(row => row.splice(0, 3, null, null, null));
             
             getDOMElements.spots.forEach(spot => spot.textContent = '');
            
@@ -507,6 +700,7 @@ const ticTacToe = (() => {
             evalutateBoard,
             updateBoardState,
             boardState,
+            isMoveLeft,
             itsAtie,
             resetBoardState
         };
@@ -540,10 +734,10 @@ const ticTacToe = (() => {
             }
         }
 
-        function nextMove(player) {
+        function nextMove(board, player) {
 
-            if (gameBoard.evalutateBoard(player, false)) {
-                end(gameBoard.evalutateBoard(player, false));
+            if (gameBoard.evalutateBoard(board, player)) {
+                end(gameBoard.evalutateBoard(board, player));
             } else if (gameBoard.itsAtie()) {
                 end('tie');
             } else {
@@ -557,17 +751,21 @@ const ticTacToe = (() => {
             let gameOver;
 
             if (symbol === 'X') {
-                setGame.playerOne.winner = setGame.playerOne.setWinner(true);
-                gameOver = 'win'
+                //setGame.playerOne.winner = setGame.playerOne.setWinner(true);
+                //gameOver = 'win'
+                console.log('Player One wins')
             } else if (symbol === '0') {
-                setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);gameOver = 'win';
+                // setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);gameOver = 'win';
+                console.log('Player Two wins')
             } else {
-                gameOver = 'tie'
+
+                console.log('TIE')
+                //gameOver = 'tie'
             }
 
-            gameDisplay.endGame(gameOver);
-            gameBoard.resetBoardState();
-            setGame.resetPlayer();
+            //gameDisplay.endGame(gameOver);
+            //gameBoard.resetBoardState();
+            //setGame.resetPlayer();
         }
     
         return {
