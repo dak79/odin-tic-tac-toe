@@ -29,7 +29,7 @@ const ticTacToe = (() => {
     } 
 
     const playerAi = (() => {
-        const randomPlay = () => {
+        const randomPlay = board => {
             const symbol = setGame.whoIsPlayng();
             let row;
             let col;
@@ -37,7 +37,7 @@ const ticTacToe = (() => {
             do {
                 row = Math.round(Math.random() * 2);
                 col = Math.round(Math.random() * 2);
-            } while (gameBoard.boardState[row][col] !== null)
+            } while (board[row][col] !== null)
             
             gameBoard.updateBoardState(row, col, symbol);
         }
@@ -665,16 +665,7 @@ const ticTacToe = (() => {
             //     return 0;
             // }
         }
-
-        // REFRACT
-        const itsAtie = () => {
-            const availableMoves = isMoveLeft(debugBoardState);
-            
-            if (!availableMoves) {
-                return true;
-            }
-        }
-
+        
         const isMoveLeft = board => board.map(row => row.some(value => value === null)).some(value => value === true);
 
         const resetBoardState = board => {
@@ -690,9 +681,7 @@ const ticTacToe = (() => {
             play,
             evalutateBoard,
             updateBoardState,
-            boardState,
             isMoveLeft,
-            itsAtie,
             resetBoardState
         };
     })();
@@ -729,7 +718,7 @@ const ticTacToe = (() => {
 
             if (gameBoard.evalutateBoard(board, player)) {
                 end(gameBoard.evalutateBoard(board, player));
-            } else if (gameBoard.itsAtie()) {
+            } else if (gameBoard.isMoveLeft() === false) {
                 end('tie');
             } else {
                 switchTurn(player);
