@@ -617,7 +617,7 @@ const ticTacToe = (() => {
             if (isHuman) {
                 if (!event.target.textContent) {
                     
-                    updateBoardState(debugBoardState, event.target.dataset.row, event.target.dataset.column, player)
+                    updateBoardState(boardState, event.target.dataset.row, event.target.dataset.column, player)
                 } else {
                     return 0;
                 }
@@ -625,19 +625,19 @@ const ticTacToe = (() => {
                 console.log('he is a bot')
                 
                 
-                const a = playerAi.findBestMove(debugBoardState, player, opponent);
+                const a = playerAi.findBestMove(boardState, player, opponent);
                 console.log(a)
-                updateBoardState(debugBoardState, a.row, a.col, player);
-                console.log(debugBoardState);
+                updateBoardState(boardState, a.row, a.col, player);
+                console.log(boardState);
 
                 
 
                 ///// SIAMO QUA /////
             }
 
-            renderBoardState(debugBoardState);
+            renderBoardState(boardState);
 
-            game.nextMove(debugBoardState, player, isHuman);            
+            game.nextMove(boardState, player, isHuman);            
         }
 
         // Update boardState array
@@ -651,28 +651,19 @@ const ticTacToe = (() => {
         /// DOBBIAMO DEFINIRE BENE DI CHI è LA VITTORIA. se del player che gioca o se dell'avversario.
         const evalutateBoard = (board, player) => {
 
-            let horizontalWins = board.map(row => row.every(value => value === player));
+            let horizontalWins = board.map(row => row.every(value => value === player)).includes(true);
 
             // Diagonal win
-            let diagonalWins = board.map((row, index) => row[index] === player).every(value => value === true);
+            let diagonalWins = board.map((row, index) => row[index] === player || row[2 - index] === player).every(value => value === true);
 
-            let diagonalWins2 = board.map((row, index) => row[2 - index] === player).every(value => value === true);
-    
-            
-            // Vertical win 
-            let verticalWins
+            // Vertical Wins
+            let verticalWins = board.map((col, colIndex) => board[0][colIndex] === player && board[1][colIndex] === player && board[2][colIndex] === player ? true : false).includes(true);
 
-            for (let col = 0; col < 3; col++) {
-                if (board[0][col] === board[1][col] && board[1][col] === board[2][col] && board[0][col]) {
-                    verticalWins = true;
-                }
-            }  
-
-            if (verticalWins || horizontalWins.includes(true) || diagonalWins || diagonalWins2) {
-                return player;
-            } else {
-                return 0;
-            }
+            // if (horizontalWins || verticalWins || diagonalWins) {
+            //     return player;
+            // } else {
+            //     return 0;
+            // }
         }
 
         // REFRACT
