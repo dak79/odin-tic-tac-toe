@@ -532,12 +532,6 @@ const ticTacToe = (() => {
             [null, null, null]
         ];
 
-        const debugBoardState = [
-            [null, null, null],
-            [null, null, null],
-            [null, null, null]
-        ];
-    
         function play(event) {
 
             const player = setGame.whoIsPlayng();
@@ -614,10 +608,10 @@ const ticTacToe = (() => {
         const resetBoardState = board => {
             board.map(row => row.splice(0, 3, null, null, null));
             
-            getDOMElements.spots.forEach(spot => spot.textContent = '');
-           
-            // Remove Listener
-            getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.play));
+            getDOMElements.spots.forEach(spot => {
+                spot.textContent = '';
+                spot.removeEventListener('click', gameBoard.play);
+            });
         }
     
         return {
