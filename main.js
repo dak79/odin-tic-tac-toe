@@ -8,8 +8,6 @@ const ticTacToe = (() => {
         const setIsPlaying = value => isPlaying = value;
         const setController = value => controller = value;
         const setBotLevel = value => botLevel = value;
-        const setIsMax = value => isMax = value;
-        const setWinner = value => winner = value;
     
         return {
             name,
@@ -23,35 +21,33 @@ const ticTacToe = (() => {
             setIsPlaying,
             setController,
             setBotLevel,
-            setIsMax,
-            setWinner
         };
     } 
 
     const playerAi = (() => {
-        const randomPlay = board => {
-            const symbol = setGame.whoIsPlayng();
-            let row;
-            let col;
+        // const randomPlay = board => {
+        //     const symbol = setGame.whoIsPlayng();
+        //     let row;
+        //     let col;
             
-            do {
-                row = Math.round(Math.random() * 2);
-                col = Math.round(Math.random() * 2);
-            } while (board[row][col] !== null)
+        //     do {
+        //         row = Math.round(Math.random() * 2);
+        //         col = Math.round(Math.random() * 2);
+        //     } while (board[row][col] !== null)
             
-            gameBoard.updateBoardState(row, col, symbol);
-        }
+        //     gameBoard.updateBoardState(row, col, symbol);
+        // }
         
         const aiValutation = (playerWins, player, opponent, depth) => playerWins === player ? 10 - depth : playerWins === opponent ? -10 + depth : 0;
         
-        const countMoves = (board, count) => {
-            board.forEach(row => {
-                row.forEach(col => {
-                    col === null ? count += 1 : 0
-                })
-            })
-            return count;
-        }
+        // const countMoves = (board, count) => {
+        //     board.forEach(row => {
+        //         row.forEach(col => {
+        //             col === null ? count += 1 : 0
+        //         })
+        //     })
+        //     return count;
+        // }
 
         const findBestMove = (board, player, opponent) => {
             let bestMove = {
@@ -276,15 +272,9 @@ const ticTacToe = (() => {
             if (startPlaying === 'player-one-play-first') {
                 playerOne.isPlaying = playerOne.setIsPlaying(true);
                 playerTwo.isPlaying = playerTwo.setIsPlaying(false);
-
-                playerOne.isMax = playerOne.setIsMax(true);
-                playerTwo.isMax = playerTwo.setIsMax(false);
             } else {
                 playerOne.isPlaying = playerOne.setIsPlaying(false);
                 playerTwo.isPlaying = playerTwo.setIsPlaying(true);
-
-                playerOne.isMax = playerOne.setIsMax(false);
-                playerTwo.isMax = playerTwo.setIsMax(true);
             }
         }
 
@@ -324,21 +314,18 @@ const ticTacToe = (() => {
 
         const isHuman = player => player === 'X' && playerOne.controller === 'human' || player === 'O' && playerTwo.controller === 'human' ? true : false;
 
-        const isMaximizer = symbol => playerOne.symbol === symbol ? playerOne.isMax ? true : false : playerTwo.isMax ? true : false;
+        // const isMaximizer = symbol => playerOne.symbol === symbol ? playerOne.isMax ? true : false : playerTwo.isMax ? true : false;
 
         const resetPlayer = () => {
             playerOne.isPlaying = playerOne.setIsPlaying(true);
             playerOne.controller = playerOne.setController('human');
-            playerOne.winner = playerOne.setWinner(false);
             playerOne.botLevel = playerOne.setBotLevel(null);
-            playerOne.isMax = playerOne.setIsMax(true);
+        
             
 
             playerTwo.isPlaying = playerTwo.setIsPlaying(false);
             playerTwo.controller = playerTwo.setController('human');
-            playerTwo.winner = playerTwo.setWinner(false);
             playerTwo.botLevel = playerTwo.setBotLevel(null);
-            playerTwo.isMax = playerTwo.setIsMax(false);
         }
     
         return {
@@ -346,7 +333,6 @@ const ticTacToe = (() => {
             playerTwo,
             whoIsPlayng,
             isHuman,
-            isMaximizer,
             resetPlayer
         };
     })();
