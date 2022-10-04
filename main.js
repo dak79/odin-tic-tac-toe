@@ -2,7 +2,7 @@ const ticTacToe = (() => {
 
     const player = (name, symbol, isPlaying) => {
         let controller = 'human'; 
-        let botLevel = null;
+        let botLevel = 'easy';
         const setName = value => name = value;
         const setIsPlaying = value => isPlaying = value;
         const setController = value => controller = value;
@@ -14,8 +14,6 @@ const ticTacToe = (() => {
             isPlaying,
             controller,
             botLevel,
-            winner,
-            isMax,
             setName,
             setIsPlaying,
             setController,
@@ -24,18 +22,18 @@ const ticTacToe = (() => {
     } 
 
     const playerAi = (() => {
-        // const randomPlay = board => {
-        //     const symbol = setGame.whoIsPlayng();
-        //     let row;
-        //     let col;
+        const randomPlay = board => {
+            const symbol = setGame.whoIsPlayng();
+            let row;
+            let col;
             
-        //     do {
-        //         row = Math.round(Math.random() * 2);
-        //         col = Math.round(Math.random() * 2);
-        //     } while (board[row][col] !== null)
+            do {
+                row = Math.round(Math.random() * 2);
+                col = Math.round(Math.random() * 2);
+            } while (board[row][col] !== null)
             
-        //     gameBoard.updateBoardState(row, col, symbol);
-        // }
+            return {row, col}
+        }
         
         const aiValutation = (playerWins, player, opponent, depth) => playerWins === player ? 10 - depth : playerWins === opponent ? -10 + depth : 0;
         
@@ -159,7 +157,8 @@ const ticTacToe = (() => {
         }
 
         return {
-            findBestMove
+            findBestMove,
+            randomPlay
         }
 
     })();
@@ -287,7 +286,7 @@ const ticTacToe = (() => {
             } else if (controller === 'controller-player-one-bot') {
                 playerOne.controller = playerOne.setController('bot');
                 gameDisplay.botLevel(event);
-                //setLevel(controller);
+                setLevel(controller);
             } else if (controller === 'controller-player-two-human') {
                 playerTwo.controller = playerTwo.setController('human');
                 gameDisplay.resetBotLevel(event);
@@ -295,36 +294,41 @@ const ticTacToe = (() => {
             } else {
                 playerTwo.controller = playerTwo.setController('bot');
                 gameDisplay.botLevel(event);
-                //setLevel(controller);
+                setLevel(controller);
             }
         }
 
-        const setLevel = () => {
-            if (controller === 'controller-player-one-bot') {
-                playerOne.setBotLevel('value-on-display');
-            } else {
-                playerTwo.setBotLevel('value-on-display');
-            }
-            // se player 1
+        const setLevel = (controller) => {
+            const selects = document.querySelectorAll('.bot-level');
+            selects.forEach(menu => menu.addEventListener('change', newValue));
 
+            function newValue (event) {
+                if (controller === 'controller-player-one-bot') {
+                    playerOne.botLevel = playerOne.setBotLevel(event.target.value);
+                } else {
+                    playerTwo.botLevel = playerTwo.setBotLevel(event.target.value);
+                }
+            }
         }
 
-        const whoIsPlayng = () => setGame.playerOne.isPlaying ? setGame.playerOne.symbol : setGame.playerTwo.symbol;
+        const whoIsPlayng = () => playerOne.isPlaying ? playerOne.symbol : playerTwo.symbol;
 
         const isHuman = player => player === 'X' && playerOne.controller === 'human' || player === 'O' && playerTwo.controller === 'human' ? true : false;
+
+        const whichLevel = player => player === 'X' ? playerOne.botLevel : playerTwo.botLevel;
 
         // const isMaximizer = symbol => playerOne.symbol === symbol ? playerOne.isMax ? true : false : playerTwo.isMax ? true : false;
 
         const resetPlayer = () => {
             playerOne.isPlaying = playerOne.setIsPlaying(true);
             playerOne.controller = playerOne.setController('human');
-            playerOne.botLevel = playerOne.setBotLevel(null);
+            playerOne.botLevel = playerOne.setBotLevel('easy');
         
             
 
             playerTwo.isPlaying = playerTwo.setIsPlaying(false);
             playerTwo.controller = playerTwo.setController('human');
-            playerTwo.botLevel = playerTwo.setBotLevel(null);
+            playerTwo.botLevel = playerTwo.setBotLevel('easy');
         }
     
         return {
@@ -332,6 +336,7 @@ const ticTacToe = (() => {
             playerTwo,
             whoIsPlayng,
             isHuman,
+            whichLevel,
             resetPlayer
         };
     })();
@@ -521,6 +526,7 @@ const ticTacToe = (() => {
 
             const player = setGame.whoIsPlayng();
             const isHuman = setGame.isHuman(player);
+            const level = setGame.whichLevel(player);
             const opponent = player === 'X' ? 'O' : 'X';
 
             if (isHuman) {
@@ -536,12 +542,34 @@ const ticTacToe = (() => {
                 }
             } else {
                 console.log('he is a bot')
+
+                let aiOrandom = Math.round(Math.random() * 10)
+                let move;
+                if (level === 'easy'){ 
+                    if (aiOrandom < 4) {
+                        console.log('easy AI')
+                        move = playerAi.findBestMove(boardState, player, opponent);
+                    } else {
+                        console.log('easy random')
+                        move = playerAi.randomPlay(boardState)
+                    }
+                } else if (level === 'medium'){
+                    if (aiOrandom < 7) {
+                        console.log('medium AI')
+                        move = playerAi.findBestMove(boardState, player, opponent);
+                    } else {
+                        console.log('medium random')
+                        move = playerAi.randomPlay(boardState);
+                    }
+                } else {
+                    console.log('unbeatable AI')
+                    move = playerAi.findBestMove(boardState, player, opponent);
+                }
                 
                 
-                const a = playerAi.findBestMove(boardState, player, opponent);
-                console.log(a)
-                updateBoardState(boardState, a.row, a.col, player);
-                console.log(boardState);
+                
+                updateBoardState(boardState, move.row, move.col, player);
+                // console.log(boardState);
 
                 
 
