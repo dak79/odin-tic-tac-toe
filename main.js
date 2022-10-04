@@ -1,9 +1,8 @@
 const ticTacToe = (() => {
 
-    const player = (name, symbol, isPlaying, isMax) => {
+    const player = (name, symbol, isPlaying) => {
         let controller = 'human'; 
         let botLevel = null;
-        let winner = false;
         const setName = value => name = value;
         const setIsPlaying = value => isPlaying = value;
         const setController = value => controller = value;
@@ -199,8 +198,8 @@ const ticTacToe = (() => {
     const setGame = (()=> {
         
         // Create standard instances
-        const playerOne = player('Player 1', 'X', true, true);
-        const playerTwo = player('Player 2', 'O', false, false);
+        const playerOne = player('Player 1', 'X', true);
+        const playerTwo = player('Player 2', 'O', false);
         
         // Event Listeners Footer
         getDOMElements.playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
