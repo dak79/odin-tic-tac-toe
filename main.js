@@ -303,9 +303,11 @@ const ticTacToe = (() => {
             selects.forEach(menu => menu.addEventListener('change', newValue));
 
             function newValue (event) {
-                if (controller === 'controller-player-one-bot') {
+                if (event.target.parentNode.dataset.level === 'player-one') {
                     playerOne.botLevel = playerOne.setBotLevel(event.target.value);
-                } else {
+                }
+
+                if (event.target.parentNode.dataset.level === 'player-two') {
                     playerTwo.botLevel = playerTwo.setBotLevel(event.target.value);
                 }
             }
@@ -541,39 +543,12 @@ const ticTacToe = (() => {
                     return 0;
                 }
             } else {
-                console.log('he is a bot')
+            
+                const aiOrandom = Math.round(Math.random() * 10)
 
-                let aiOrandom = Math.round(Math.random() * 10)
-                let move;
-                if (level === 'easy'){ 
-                    if (aiOrandom < 4) {
-                        console.log('easy AI')
-                        move = playerAi.findBestMove(boardState, player, opponent);
-                    } else {
-                        console.log('easy random')
-                        move = playerAi.randomPlay(boardState)
-                    }
-                } else if (level === 'medium'){
-                    if (aiOrandom < 7) {
-                        console.log('medium AI')
-                        move = playerAi.findBestMove(boardState, player, opponent);
-                    } else {
-                        console.log('medium random')
-                        move = playerAi.randomPlay(boardState);
-                    }
-                } else {
-                    console.log('unbeatable AI')
-                    move = playerAi.findBestMove(boardState, player, opponent);
-                }
-                
-                
-                
+                const move = level === 'easy' ? aiOrandom < 3 ? playerAi.findBestMove(boardState, player, opponent) : playerAi.randomPlay(boardState) : level === 'medium' ? aiOrandom < 6 ? playerAi.findBestMove(boardState, player, opponent) : playerAi.randomPlay(boardState) : playerAi.findBestMove(boardState, player, opponent);
+
                 updateBoardState(boardState, move.row, move.col, player);
-                // console.log(boardState);
-
-                
-
-                ///// SIAMO QUA /////
             }
 
             renderBoardState(boardState);
