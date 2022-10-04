@@ -23,7 +23,6 @@ const ticTacToe = (() => {
 
     const playerAi = (() => {
         const randomPlay = board => {
-            const symbol = setGame.whoIsPlayng();
             let row;
             let col;
             
@@ -37,15 +36,6 @@ const ticTacToe = (() => {
         
         const aiValutation = (playerWins, player, opponent, depth) => playerWins === player ? 10 - depth : playerWins === opponent ? -10 + depth : 0;
         
-        // const countMoves = (board, count) => {
-        //     board.forEach(row => {
-        //         row.forEach(col => {
-        //             col === null ? count += 1 : 0
-        //         })
-        //     })
-        //     return count;
-        // }
-
         const findBestMove = (board, player, opponent) => {
             let bestMove = {
                 row: null,
@@ -116,11 +106,9 @@ const ticTacToe = (() => {
                             // Play
                             board[rowIndex][colIndex] = player;
                             
-                            // Find a value
-                            let value = minimax(board, player, opponent, depth + 1, false)
-                            
-                            bestVal = Math.max(bestVal, value);
-                            
+                            // Find best value
+                            bestVal = Math.max(bestVal, minimax(board, player, opponent, depth + 1, false))     
+         
                             // Undo the play
                             board[rowIndex][colIndex] = null;
                         }
@@ -142,10 +130,8 @@ const ticTacToe = (() => {
                             // Play
                             board[rowIndex][colIndex] = opponent;
 
-                            // Find a value
-                            let value = minimax(board, player, opponent, depth + 1, true);
-
-                            bestVal = Math.min(bestVal, value)
+                            // Find best value
+                            bestVal = Math.min(bestVal, minimax(board, player, opponent, depth + 1, true));
                             
                             // Undo the move
                             board[rowIndex][colIndex] = null;
@@ -176,6 +162,7 @@ const ticTacToe = (() => {
         const playFirst = document.querySelectorAll('input[name=radio-play-first]');
         const changeNameBtns = document.querySelectorAll('.btn-change');
         const playerController = document.querySelectorAll('.radio-controller');
+        const levels = document.querySelectorAll('.bot-level');
         const btnStart = document.querySelector('#btn-start');
         
         return {
@@ -189,6 +176,7 @@ const ticTacToe = (() => {
             playFirst,
             changeNameBtns,
             playerController,
+            levels,
             btnStart
         }
         
@@ -205,14 +193,16 @@ const ticTacToe = (() => {
         getDOMElements.changeNameBtns.forEach(button => button.addEventListener('click', changePlayerName));
         getDOMElements.playerController.forEach(button => button.addEventListener('change', setControllers));
 
+        const create = element => document.createElement(element);
+        
         function changePlayerName (event) {
             
             // Create card for entering new name
-            const background = document.createElement('div');
-            const card = document.createElement('div');
-            const newNameLabel = document.createElement('label');
-            const newName = document.createElement('input');
-            const btnSave = document.createElement('button');
+            const background = create('div');
+            const card = create('div');
+            const newNameLabel = create('label');
+            const newName = create('input');
+            const btnSave = create('button');
             const btnChange = event.target.dataset.btn;
             const btnChangeName = String(event.target.dataset.name);
             
@@ -281,30 +271,31 @@ const ticTacToe = (() => {
 
             if (controller === 'controller-player-one-human') {
                 playerOne.controller = playerOne.setController('human');
+                playerOne.botLevel = playerOne.setBotLevel('easy');
                 gameDisplay.resetBotLevel(event);
-                playerOne.botLevel = playerOne.setBotLevel(null);
             } else if (controller === 'controller-player-one-bot') {
                 playerOne.controller = playerOne.setController('bot');
+                setLevel();
                 gameDisplay.botLevel(event);
-                setLevel(controller);
             } else if (controller === 'controller-player-two-human') {
                 playerTwo.controller = playerTwo.setController('human');
+                playerTwo.botLevel = playerTwo.setBotLevel('easy');
                 gameDisplay.resetBotLevel(event);
-                playerTwo.botLevel = playerTwo.setBotLevel(null);
             } else {
                 playerTwo.controller = playerTwo.setController('bot');
+                setLevel();
                 gameDisplay.botLevel(event);
-                setLevel(controller);
             }
         }
 
-        const setLevel = (controller) => {
-            const selects = document.querySelectorAll('.bot-level');
-            selects.forEach(menu => menu.addEventListener('change', newValue));
+        const setLevel = () => {
+            getDOMElements.levels.forEach(menu => menu.addEventListener('change', newValue));
 
             function newValue (event) {
                 if (event.target.parentNode.dataset.level === 'player-one') {
                     playerOne.botLevel = playerOne.setBotLevel(event.target.value);
+
+                    getDOMElements.levels.forEach(menu => menu.removeEventListener('change', newValue));
                 }
 
                 if (event.target.parentNode.dataset.level === 'player-two') {
@@ -319,15 +310,11 @@ const ticTacToe = (() => {
 
         const whichLevel = player => player === 'X' ? playerOne.botLevel : playerTwo.botLevel;
 
-        // const isMaximizer = symbol => playerOne.symbol === symbol ? playerOne.isMax ? true : false : playerTwo.isMax ? true : false;
-
         const resetPlayer = () => {
             playerOne.isPlaying = playerOne.setIsPlaying(true);
             playerOne.controller = playerOne.setController('human');
             playerOne.botLevel = playerOne.setBotLevel('easy');
         
-            
-
             playerTwo.isPlaying = playerTwo.setIsPlaying(false);
             playerTwo.controller = playerTwo.setController('human');
             playerTwo.botLevel = playerTwo.setBotLevel('easy');
@@ -400,7 +387,7 @@ const ticTacToe = (() => {
         const resetBotLevel = (event) => {
             const div = document.querySelector(`#bot-level-${event.target.dataset.level}`);
 
-            div.innerHTML = '';
+            div.replaceChildren();
         }
 
         const resetPlayerTurn = () => {
@@ -543,6 +530,8 @@ const ticTacToe = (() => {
                     return 0;
                 }
             } else {
+
+                console.log(player, level);
             
                 const aiOrandom = Math.round(Math.random() * 10)
 
