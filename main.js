@@ -42,60 +42,8 @@ const ticTacToe = (() => {
             gameBoard.updateBoardState(row, col, symbol);
         }
         
-        const randomOrAi = () => {
-            
-        }
+        const aiValutation = (playerWins, player, opponent, depth) => playerWins === player ? 10 - depth : playerWins === opponent ? -10 + depth : 0;
         
-        const isMaximizer = symbol => setGame.playerOne.symbol === symbol ? setGame.playerOne.isMax ? true : false : setGame.playerTwo.isMax ? true : false;
-        
-        const aiValutation2 = (board, player, opponent, depth) => {
-
-            //Horizontal win
-            for (let row = 0; row < 3; row++) {
-                
-                if(board[row][0] === board[row][1] && board[row][1] === board[row][2] && board[row][0]) {
-                    if (board[row][0] === player) {
-                        return +10 - depth
-                    } else if (board[row][0] === opponent) {
-                        return -10 + depth
-                    }
-
-                }
-            }
-
-            // Vertical win 
-            for (let col = 0; col < 3; col++) {
-                if (board[0][col] === board[1][col] && board[1][col] === board[2][col] && board[0][col]) {
-                    if (board[0][col] === player) {
-                        return +10 - depth
-                    } else if (board[0][col] === opponent) {
-                        return -10 + depth
-
-                    }
-                }
-            }
-
-            // Diagonal win
-            if(board[0][0] === board[1][1] && board[1][1] === board[2][2] && board[1][1]) {
-                if (board[0][0] === player) {
-                    return +10- depth
-                } else if (board[0][0] === opponent) {
-                    return -10 + depth
-                }
-            }
-
-            if (board[0][2] === board[1][1] && board[1][1] === board[2][0] && board[1][1]) {
-                if (board[0][2] === player) {
-                    return +10 - depth
-                } else if (board[0][2] === opponent) {
-                    return -10 + depth
-                }
-
-            }
-            
-            return 0
-        }
-
         const countMoves = (board, count) => {
             board.forEach(row => {
                 row.forEach(col => {
@@ -113,7 +61,7 @@ const ticTacToe = (() => {
 
             let bestMoveValue = -Infinity;
 
-            //for each move in board:
+            //for each move in board
             board.map((row, rowIndex) => {
 
                 row.map((col, colIndex) => {
@@ -122,28 +70,20 @@ const ticTacToe = (() => {
                         // Make a move
                         board[rowIndex][colIndex] = player;
                         
-
                         // Take minimax valutation
                         let currentMoveValue = minimax(board, player, opponent, 0, false);
-                        console.log(currentMoveValue);
-                        
-
-
+                    
                         // Undo the move
                         board[rowIndex][colIndex] = null;
 
                         // Take the best move
-
                         if (currentMoveValue > bestMoveValue) {
                             bestMove.row = rowIndex;
                             bestMove.col = colIndex;
                             bestMoveValue = currentMoveValue;
-                            console.log(bestMove);
                         }
-                    } 
-                    
+                    }    
                 })
-            
             })
             
             return bestMove;
@@ -151,19 +91,18 @@ const ticTacToe = (() => {
 
         const minimax = (board, player, opponent, depth, isMax) => {
 
-            let score = aiValutation2(board, player, opponent, depth);
+            let result = gameBoard.evalutateBoard(board, player, opponent)
 
-        
+            let score = aiValutation(result, player, opponent, depth);
 
             // Base case: minmax find a value of the board state or no move left
-            if (score === 10) {
+            if (score > 0) {
                 return score;
             }
 
-            if (score === -10) {
+            if (score < 0) {
                 return score;
             }
-
 
             if (gameBoard.isMoveLeft(board) === false) {
                 return 0;
@@ -194,7 +133,6 @@ const ticTacToe = (() => {
                         }
                     })
                 })
-
                 return bestVal;
 
             } else {
@@ -218,22 +156,15 @@ const ticTacToe = (() => {
                             
                             // Undo the move
                             board[rowIndex][colIndex] = null;
-                           
                         }
-
                     })
                 })
                 return bestVal;
             }
-
-
         }
 
         return {
-            randomPlay,
-            countMoves,
-            findBestMove,
-            aiValutation2
+            findBestMove
         }
 
     })();
@@ -273,7 +204,7 @@ const ticTacToe = (() => {
         
         // Create standard instances
         const playerOne = player('Player 1', 'X', true, true);
-        const playerTwo = player('Player 2', '0', false, false);
+        const playerTwo = player('Player 2', 'O', false, false);
         
         // Event Listeners Footer
         getDOMElements.playFirst.forEach(button => button.addEventListener('change', setPlayFirst));
@@ -391,7 +322,9 @@ const ticTacToe = (() => {
 
         const whoIsPlayng = () => setGame.playerOne.isPlaying ? setGame.playerOne.symbol : setGame.playerTwo.symbol;
 
-        const isHuman = player => player === 'X' && playerOne.controller === 'human' || player === '0' && playerTwo.controller === 'human' ? true : false;
+        const isHuman = player => player === 'X' && playerOne.controller === 'human' || player === 'O' && playerTwo.controller === 'human' ? true : false;
+
+        const isMaximizer = symbol => playerOne.symbol === symbol ? playerOne.isMax ? true : false : playerTwo.isMax ? true : false;
 
         const resetPlayer = () => {
             playerOne.isPlaying = playerOne.setIsPlaying(true);
@@ -413,6 +346,7 @@ const ticTacToe = (() => {
             playerTwo,
             whoIsPlayng,
             isHuman,
+            isMaximizer,
             resetPlayer
         };
     })();
@@ -531,8 +465,8 @@ const ticTacToe = (() => {
             const newGameInfo = document.createElement('p');
 
             wrapper.classList.add('winning-msg');
-            if (result === 'win') {
-                winningText.textContent = `${setGame.playerOne.winner ? setGame.playerOne.name : setGame.playerTwo.name} wins the match`;
+            if (result === 'Win X' || result === 'Win O') {
+                winningText.textContent = `${result === 'Win X' ? setGame.playerOne.name : setGame.playerTwo.name} wins the match`;
                 winningText.classList.add('winning-text');
             } else {
                 winningText.textContent = `It's a tie`;
@@ -599,25 +533,25 @@ const ticTacToe = (() => {
         ];
 
         const debugBoardState = [
-            ['0', null, 'X'],
             [null, null, null],
-            [null, 'X', '0']
+            [null, null, null],
+            [null, null, null]
         ];
     
         function play(event) {
 
             const player = setGame.whoIsPlayng();
-            // const opponent = '0';
             const isHuman = setGame.isHuman(player);
-
-            const opponent = player === 'X' ? '0' : 'X';
-            //console.log(`FUNCTION PLAY OPPONENT: ${opponent}`);
-            console
+            const opponent = player === 'X' ? 'O' : 'X';
 
             if (isHuman) {
                 if (!event.target.textContent) {
                     
                     updateBoardState(boardState, event.target.dataset.row, event.target.dataset.column, player)
+
+                    getDOMElements.spots.forEach(spot => spot.removeEventListener('click', play));
+
+
                 } else {
                     return 0;
                 }
@@ -637,7 +571,7 @@ const ticTacToe = (() => {
 
             renderBoardState(boardState);
 
-            game.nextMove(boardState, player, isHuman);            
+            game.nextMove(boardState, player, opponent);            
         }
 
         // Update boardState array
@@ -646,24 +580,33 @@ const ticTacToe = (() => {
         // Render boardState array
         const renderBoardState = board => getDOMElements.spots.forEach(spot => spot.textContent = board[spot.dataset.row][spot.dataset.column]);
 
-        // Evalutate boardState: winning or tie 
+        // Evalutate boardState
+        const evalutateBoard = (board, player, opponent) => {
 
-        /// DOBBIAMO DEFINIRE BENE DI CHI è LA VITTORIA. se del player che gioca o se dell'avversario.
-        const evalutateBoard = (board, player) => {
-
-            let horizontalWins = board.map(row => row.every(value => value === player)).includes(true);
-
+            // Horizontal wins
+            let horizontalWins = board.map(row => row.every(value => value === player)).includes(true) ? player : board.map(row => row.every(value => value === opponent)).includes(true) ? opponent : 0;
+            if (horizontalWins) {
+                return horizontalWins;
+            } 
+            
             // Diagonal win
-            let diagonalWins = board.map((row, index) => row[index] === player || row[2 - index] === player).every(value => value === true);
+            let diagonalWins = board.map((row, index) => row[index] === player).every(value => value === true) ? player : board.map((row, index) => row[index] === opponent).every(value => value === true) ? opponent : 0;
+            if (diagonalWins) {
+                return diagonalWins
+            }
+
+            let diagonalWins2 = board.map((row, index) => row[2 - index] === player).every(value => value === true) ? player : board.map((row, index) => row[2 - index] === opponent).every(value => value === true) ? opponent : 0;
+            if (diagonalWins2) {
+                return diagonalWins2;
+            }
 
             // Vertical Wins
-            let verticalWins = board.map((col, colIndex) => board[0][colIndex] === player && board[1][colIndex] === player && board[2][colIndex] === player ? true : false).includes(true);
+            let verticalWins = board.map((col, colIndex) => board[0][colIndex] === player && board[1][colIndex] === player && board[2][colIndex] === player ? true : false).includes(true) ? player : board.map((col, colIndex) => board[0][colIndex] === opponent && board[1][colIndex] === opponent && board[2][colIndex] === opponent ? true : false).includes(true) ? opponent : 0;
+            if (verticalWins) {
+                return verticalWins
+            }
 
-            // if (horizontalWins || verticalWins || diagonalWins) {
-            //     return player;
-            // } else {
-            //     return 0;
-            // }
+            return 0;
         }
         
         const isMoveLeft = board => board.map(row => row.some(value => value === null)).some(value => value === true);
@@ -692,64 +635,35 @@ const ticTacToe = (() => {
         getDOMElements.btnStart.addEventListener('click', start);
 
         function start() {
-            
-            const isHuman = setGame.isHuman(setGame.whoIsPlayng());
             gameDisplay.startGame();
             
-           
-            isHuman ? getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play)) : setTimeout(gameBoard.play, 1000);  
+            setGame.isHuman(setGame.whoIsPlayng()) ? getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play)) : setTimeout(gameBoard.play, 1000);  
         }
     
         const switchTurn = player => player === 'X' ? setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(false) : setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(true);
         
-        function inPlay() {
-            
-            const isHuman = setGame.isHuman(setGame.whoIsPlayng());
-            
-            if (isHuman) {    
-                getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play));
-            } else {
-                getDOMElements.spots.forEach(spot => spot.removeEventListener('click', gameBoard.play));
-                gameBoard.play()
-            }
-        }
+        const inPlay = () => setGame.isHuman(setGame.whoIsPlayng()) ?getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play)) : gameBoard.play();
 
-        function nextMove(board, player) {
-
-            if (gameBoard.evalutateBoard(board, player)) {
-                end(gameBoard.evalutateBoard(board, player));
-            } else if (gameBoard.isMoveLeft() === false) {
-                end('tie');
+        const nextMove = (board, player, opponent) => {
+            if (gameBoard.evalutateBoard(board, player, opponent)) {
+                end(gameBoard.evalutateBoard(board, player, opponent), board);
+            } else if (gameBoard.isMoveLeft(board) === false) {
+                end('tie', board);
             } else {
                 switchTurn(player);
                 gameDisplay.playerTurn();
                 setTimeout(inPlay, 1000);
-            }
+            }        
         }
     
-        function end (symbol) {
-            let gameOver;
-
-            if (symbol === 'X') {
-                //setGame.playerOne.winner = setGame.playerOne.setWinner(true);
-                //gameOver = 'win'
-                console.log('Player One wins')
-            } else if (symbol === '0') {
-                // setGame.playerTwo.winner = setGame.playerTwo.setWinner(true);gameOver = 'win';
-                console.log('Player Two wins')
-            } else {
-
-                console.log('TIE')
-                //gameOver = 'tie'
-            }
-
-            //gameDisplay.endGame(gameOver);
-            //gameBoard.resetBoardState();
-            //setGame.resetPlayer();
+        const end = (symbol, board) => {
+            let gameOver = symbol === 'X' ? 'Win X' : symbol === 'O' ? 'Win O' : 'tie';
+            gameDisplay.endGame(gameOver);
+            gameBoard.resetBoardState(board);
+            setGame.resetPlayer();
         }
     
         return {
-            switchTurn,
             nextMove
         };
     })();
