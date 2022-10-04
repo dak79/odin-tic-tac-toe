@@ -530,9 +530,6 @@ const ticTacToe = (() => {
                     return 0;
                 }
             } else {
-
-                console.log(player, level);
-            
                 const aiOrandom = Math.round(Math.random() * 10)
 
                 const move = level === 'easy' ? aiOrandom < 3 ? playerAi.findBestMove(boardState, player, opponent) : playerAi.randomPlay(boardState) : level === 'medium' ? aiOrandom < 6 ? playerAi.findBestMove(boardState, player, opponent) : playerAi.randomPlay(boardState) : playerAi.findBestMove(boardState, player, opponent);
