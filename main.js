@@ -620,7 +620,7 @@ const ticTacToe = (() => {
             } else {
                 switchTurn(player);
                 gameDisplay.playerTurn();
-                setTimeout(inPlay, 1000);
+                inPlay();
             }        
         }
     
