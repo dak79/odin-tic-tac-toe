@@ -610,7 +610,7 @@ const ticTacToe = (() => {
     
         const switchTurn = player => player === 'X' ? setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(false) : setGame.playerOne.isPlaying = setGame.playerOne.setIsPlaying(true);
         
-        const inPlay = () => setGame.isHuman(setGame.whoIsPlayng()) ?getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play)) : gameBoard.play();
+        const inPlay = () => setGame.isHuman(setGame.whoIsPlayng()) ?getDOMElements.spots.forEach(spot => spot.addEventListener('click', gameBoard.play)) : setTimeout(gameBoard.play, 1000);
 
         const nextMove = (board, player, opponent) => {
             if (gameBoard.evalutateBoard(board, player, opponent)) {
